@@ -555,6 +555,129 @@ export const AI_NAV_GROUP: NavGroup = {
   ],
 };
 
+/**
+ * Sidebar layout (M365 style). The flat `NAV_ITEMS` above stays the source of truth (permissions, counters,
+ * tests); these constants only decide how `AppNav` groups them visually. A pinned set sits at the top, the rest
+ * are organised into collapsible sections, and `/admin` is pinned at the bottom. Any visible item not pinned and
+ * not placed in a section still renders at the top level, so nothing can silently disappear.
+ */
+
+/** Cross-cutting "my work" inboxes, pinned at the very top in this order (they keep their counters). */
+export const TOP_NAV_HREFS: readonly string[] = ["/dashboard", "/approvals", "/proposals", "/tasks"];
+
+/** Pinned at the very bottom. */
+export const BOTTOM_NAV_HREFS: readonly string[] = ["/admin"];
+
+export type NavSection = { value: string; label: string; icon: FluentIcon; hrefs: readonly string[] };
+
+/** Collapsible sections, in display order. `hrefs` are listed in the order they should appear within a section. */
+export const NAV_SECTIONS: readonly NavSection[] = [
+  {
+    value: "sales",
+    label: "Sales & clients",
+    icon: bundleIcon(Building20Filled, Building20Regular),
+    hrefs: ["/leads", "/opportunities", "/sales", "/clients", "/contracts", "/purchase-orders", "/vendors"],
+  },
+  {
+    value: "recruiting",
+    label: "Recruiting",
+    icon: bundleIcon(Briefcase20Filled, Briefcase20Regular),
+    hrefs: [
+      "/demands",
+      "/demands/intake",
+      "/candidates",
+      "/talent-pools",
+      "/marketing",
+      "/interviews",
+      "/assessments",
+      "/offers",
+      "/admin/job-network",
+    ],
+  },
+  {
+    value: "campus",
+    label: "Campus",
+    icon: bundleIcon(PeopleTeam20Filled, PeopleTeam20Regular),
+    hrefs: ["/campus/drives", "/campus/institutions", "/campus/events"],
+  },
+  {
+    value: "referrals",
+    label: "Referrals & mobility",
+    icon: bundleIcon(PersonAdd20Filled, PersonAdd20Regular),
+    hrefs: [
+      "/refer",
+      "/internal-jobs",
+      "/internal-jobs/my-applications",
+      "/referrals",
+      "/referrals/rewards",
+      "/admin/referrals",
+      "/admin/mobility",
+    ],
+  },
+  {
+    value: "delivery",
+    label: "Delivery & workforce",
+    icon: bundleIcon(FolderBriefcase20Filled, FolderBriefcase20Regular),
+    hrefs: [
+      "/projects",
+      "/workforce",
+      "/placements",
+      "/placements/pre-joining",
+      "/placements/ending-soon",
+      "/offboarding",
+      "/bench",
+      "/hrms/sync",
+    ],
+  },
+  {
+    value: "compliance",
+    label: "Onboarding & compliance",
+    icon: bundleIcon(ShieldCheckmark20Filled, ShieldCheckmark20Regular),
+    hrefs: [
+      "/onboarding",
+      "/onboarding/questions",
+      "/onboarding/faq-gaps",
+      "/settings/knowledge",
+      "/bgv",
+      "/compliance",
+      "/compliance/credentials",
+      "/compliance/pre-start-risk",
+      "/immigration",
+      "/fairness",
+      "/documents/verify",
+    ],
+  },
+  {
+    value: "time",
+    label: "Time & pay",
+    icon: bundleIcon(CalendarClock20Filled, CalendarClock20Regular),
+    hrefs: ["/timesheets", "/leave", "/expenses", "/payroll"],
+  },
+  {
+    value: "finance",
+    label: "Billing & finance",
+    icon: bundleIcon(ReceiptMoney20Filled, ReceiptMoney20Regular),
+    hrefs: [
+      "/billing/invoices",
+      "/billing/runs",
+      "/billing/einvoice",
+      "/receivables/payments",
+      "/receivables/collections",
+      "/settings/collection-rules",
+      "/finance/periods",
+      "/finance/dsc",
+      "/finance/tds-reconciliation",
+      "/finance/ledger-sync",
+    ],
+  },
+  {
+    value: "integrations",
+    label: "Integrations",
+    icon: bundleIcon(PlugConnected20Filled, PlugConnected20Regular),
+    hrefs: ["/admin/integrations", "/admin/integrations/access-reviews", "/settings/integrations/webhooks"],
+  },
+];
+
 /** Nav items visible to a user with `permissions`. */
 export function visibleNavItems<T extends Pick<NavItem, "requiresAny">>(items: readonly T[], permissions: PermissionMap): T[] {
   return items.filter((item) => !item.requiresAny || hasAnyPermission(permissions, item.requiresAny));
