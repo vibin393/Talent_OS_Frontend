@@ -1,0 +1,21 @@
+/* Global resets only. All component styling uses Fluent UI (Griffel makeStyles + tokens). */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: dark) {
+  /* Matches Fluent webDarkTheme colorNeutralBackground3 so overscroll areas are not white. */
+  html {
+    color-scheme: dark;
+    background-color: #141414;
+  }
+}

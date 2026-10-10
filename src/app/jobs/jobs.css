@@ -1,0 +1,251 @@
+/* Public Job Network site (Epic 75, B1). Microsoft 365 / Fluent-inspired, single-column at 360px, WCAG 2.1 AA. */
+.jobs-root {
+  --jobs-brand: #0f6cbd;
+  --jobs-fg: #242424;
+  --jobs-muted: #616161;
+  --jobs-border: #e0e0e0;
+  --jobs-bg: #faf9f8;
+  color: var(--jobs-fg);
+  background: var(--jobs-bg);
+  min-height: 100vh;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+.jobs-header {
+  background: #fff;
+  border-bottom: 1px solid var(--jobs-border);
+  padding: 16px;
+}
+.jobs-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--jobs-brand);
+}
+.jobs-header p {
+  margin: 4px 0 0;
+  color: var(--jobs-muted);
+}
+.jobs-main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px;
+}
+.jobs-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.jobs-search-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.jobs-filter-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  border: 1px solid var(--jobs-border);
+  border-radius: 8px;
+  padding: 12px;
+}
+.jobs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.875rem;
+}
+.jobs-field input,
+.jobs-field select,
+.jobs-field textarea {
+  padding: 6px 8px;
+  border: 1px solid var(--jobs-border);
+  border-radius: 4px;
+  font: inherit;
+  min-height: 32px;
+}
+.jobs-button {
+  background: var(--jobs-brand);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  min-height: 32px;
+  cursor: pointer;
+  font: inherit;
+}
+.jobs-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.jobs-button-subtle,
+.jobs-link-button {
+  background: transparent;
+  color: var(--jobs-brand);
+  border: 1px solid var(--jobs-brand);
+  border-radius: 4px;
+  padding: 8px 16px;
+  min-height: 32px;
+  cursor: pointer;
+  font: inherit;
+}
+.jobs-link-button {
+  border: none;
+  text-decoration: underline;
+  padding: 4px 0;
+}
+.jobs-count {
+  color: var(--jobs-muted);
+  margin: 8px 0;
+}
+.jobs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.jobs-card {
+  background: #fff;
+  border: 1px solid var(--jobs-border);
+  border-radius: 8px;
+  padding: 16px;
+}
+.jobs-card-title {
+  margin: 0 0 4px;
+  font-size: 1.125rem;
+}
+.jobs-card-title a {
+  color: var(--jobs-brand);
+  text-decoration: none;
+}
+.jobs-card-title a:hover {
+  text-decoration: underline;
+}
+.jobs-card-agency {
+  margin: 0;
+  font-weight: 600;
+}
+.jobs-card-client {
+  margin: 2px 0 0;
+  color: var(--jobs-muted);
+}
+.jobs-card-meta {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 8px 0 0;
+  padding: 0;
+  color: var(--jobs-muted);
+  font-size: 0.875rem;
+}
+.jobs-empty {
+  padding: 32px;
+  text-align: center;
+  color: var(--jobs-muted);
+}
+.jobs-pagination {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+.jobs-detail-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 16px 0;
+}
+.jobs-agency-box {
+  border: 1px solid var(--jobs-border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 24px;
+  background: #fff;
+}
+.jobs-footer-note {
+  color: var(--jobs-muted);
+  font-size: 0.875rem;
+  margin-top: 24px;
+}
+.jobs-footer {
+  border-top: 1px solid var(--jobs-border);
+  padding: 16px;
+  text-align: center;
+  color: var(--jobs-muted);
+  font-size: 0.875rem;
+}
+.jobs-cookie-banner {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  border-top: 1px solid var(--jobs-border);
+  padding: 12px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.jobs-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 100;
+}
+.jobs-dialog {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 480px;
+  width: 100%;
+}
+.jobs-dialog fieldset {
+  border: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.jobs-radio {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.jobs-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+.jobs-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@media (prefers-color-scheme: dark) {
+  .jobs-root {
+    --jobs-fg: #f5f5f5;
+    --jobs-muted: #adadad;
+    --jobs-bg: #1b1a19;
+    --jobs-border: #3b3a39;
+  }
+  .jobs-header,
+  .jobs-card,
+  .jobs-agency-box,
+  .jobs-dialog,
+  .jobs-cookie-banner {
+    background: #292827;
+  }
+}
