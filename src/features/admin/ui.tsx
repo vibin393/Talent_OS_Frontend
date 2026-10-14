@@ -43,6 +43,9 @@ export const useAdminStyles = makeStyles({
   },
   grow: { flex: 1 },
   filter: { minWidth: "160px" },
+  // Fluent Dropdown/Combobox carry an intrinsic ~250px min-width; inside a narrower filter slot they
+  // overflow their box to the right and paint over the neighbouring control. Fill the slot instead.
+  control: { width: "100%", minWidth: 0 },
   search: { minWidth: "220px", flex: "1 1 220px", maxWidth: "360px" },
   surface: {
     backgroundColor: tokens.colorNeutralBackground1,
@@ -173,11 +176,13 @@ export function IdSelect({
   hint?: string;
   className?: string;
 }) {
+  const styles = useAdminStyles();
   const selected = options.find((o) => o.id === value);
   const text = selected?.label ?? (value === null ? (noneLabel ?? "") : "");
   return (
     <Field label={label} hint={hint} className={className}>
       <Dropdown
+        className={styles.control}
         value={text}
         selectedOptions={[value ?? NONE]}
         disabled={disabled}
@@ -216,6 +221,7 @@ export function IdMultiSelect({
   validationMessage?: string;
   placeholder?: string;
 }) {
+  const styles = useAdminStyles();
   const text = options
     .filter((o) => value.includes(o.id))
     .map((o) => o.label)
@@ -229,6 +235,7 @@ export function IdMultiSelect({
       validationMessage={validationMessage}
     >
       <Dropdown
+        className={styles.control}
         multiselect
         value={text}
         placeholder={placeholder}

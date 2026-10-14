@@ -43,6 +43,9 @@ const useStyles = makeStyles({
     flex: 1,
     minWidth: 0,
     overflowY: "auto",
+    // Page scrolls vertically only; wide children (tab strips, tables) manage their own horizontal
+    // scroll. Without this the whole page could slide sideways under the fixed left nav.
+    overflowX: "hidden",
     padding: `${tokens.spacingVerticalXXL} ${tokens.spacingHorizontalXXL}`,
     backgroundColor: tokens.colorNeutralBackground3,
     "@media (max-width: 767px)": {

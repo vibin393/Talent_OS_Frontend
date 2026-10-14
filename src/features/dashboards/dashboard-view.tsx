@@ -47,7 +47,8 @@ import { useDashboards, useDashboardTiles } from "./use-dashboard-tile";
 const MIN_TILE_WIDTH = 320;
 
 const useStyles = makeStyles({
-  tabs: { marginBottom: tokens.spacingVerticalM },
+  // Many tabs (up to ~17 role/P2–P5 dashboards) scroll within the strip instead of widening the page.
+  tabs: { marginBottom: tokens.spacingVerticalM, maxWidth: "100%", overflowX: "auto", flexShrink: 0 },
   tabBadge: { marginLeft: tokens.spacingHorizontalXS },
   grid: {
     display: "grid",

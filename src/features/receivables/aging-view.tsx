@@ -98,9 +98,9 @@ export function AgingView() {
         <div className={s.tile}>
           <Text className={s.muted}>DSO (days)</Text>
           <span className={s.tileValue}>{dso.data ? (dso.data.dso ?? "n/a") : "-"}</span>
-          <div className={s.row}>
-            <Input aria-label="DSO from" type="date" size="small" value={dsoStart} onChange={(_, d) => setDsoStart(d.value)} />
-            <Input aria-label="DSO to" type="date" size="small" value={dsoEnd} onChange={(_, d) => setDsoEnd(d.value)} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 4, width: "100%" }}>
+            <Input aria-label="DSO from" type="date" size="small" value={dsoStart} onChange={(_, d) => setDsoStart(d.value)} style={{ width: "100%" }} />
+            <Input aria-label="DSO to" type="date" size="small" value={dsoEnd} onChange={(_, d) => setDsoEnd(d.value)} style={{ width: "100%" }} />
           </div>
         </div>
       </div>

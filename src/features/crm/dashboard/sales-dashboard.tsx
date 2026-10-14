@@ -47,6 +47,9 @@ const useStyles = makeStyles({
   big: { fontSize: tokens.fontSizeHero800, lineHeight: tokens.lineHeightHero800, fontWeight: tokens.fontWeightSemibold },
   muted: { color: tokens.colorNeutralForeground3 },
   chart: { height: `${CHART_HEIGHT}px`, minWidth: 0 },
+  // The 4-column table is cramped inside a narrow tile; keep columns readable and scroll if needed.
+  tableWrap: { overflowX: "auto" },
+  leadTable: { minWidth: "320px" },
 });
 
 function defaultRange() {
@@ -236,7 +239,8 @@ export function SalesDashboard() {
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-                <Table size="small" aria-label="Leads by source">
+                <div className={styles.tableWrap}>
+                <Table size="small" aria-label="Leads by source" className={styles.leadTable}>
                   <TableHeader>
                     <TableRow>
                       <TableHeaderCell>Source</TableHeaderCell>
@@ -259,6 +263,7 @@ export function SalesDashboard() {
                     })}
                   </TableBody>
                 </Table>
+                </div>
               </>
             )}
           </Tile>

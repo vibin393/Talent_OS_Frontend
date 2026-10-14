@@ -75,7 +75,16 @@ const useStyles = makeStyles({
   },
   filters: { display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: tokens.spacingHorizontalM },
   filter: { minWidth: "150px", flex: "1 1 150px", maxWidth: "240px" },
-  group: { display: "flex", gap: tokens.spacingHorizontalXS, alignItems: "center", flexWrap: "wrap" },
+  // "Group by" control: a stable unit that never compresses into the Record dropdown; it keeps its
+  // content width and instead wraps to its own line as a whole when the row runs out of space.
+  group: {
+    display: "flex",
+    gap: tokens.spacingHorizontalXS,
+    alignItems: "center",
+    flexWrap: "wrap",
+    flexShrink: 0,
+  },
+  groupLabel: { whiteSpace: "nowrap", color: tokens.colorNeutralForeground2 },
   list: {
     display: "flex",
     flexDirection: "column",
@@ -231,7 +240,7 @@ export function ProposalInbox({ scope = "mine", initialId = null }: { scope?: "m
         />
         <IdSelect label="Record" className={styles.filter} options={options.records} value={filters.record} noneLabel="All records" onChange={(v) => updateFilter({ record: v })} />
         <div className={styles.group} role="group" aria-label="Group by">
-          <Text>Group by:</Text>
+          <Text className={styles.groupLabel}>Group by:</Text>
           <ToggleButton size="small" checked={groupBy === "agent"} onClick={() => setGroupBy((g) => (g === "agent" ? null : "agent"))}>
             Agent
           </ToggleButton>

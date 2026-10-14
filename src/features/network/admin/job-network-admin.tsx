@@ -71,9 +71,9 @@ export function JobNetworkAdmin() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 820 }}>
-      <div>
-        <Title3 as="h1">Job network</Title3>
-        <Body1>List your open jobs on Talent OS Jobs. Applications still come to your careers site.</Body1>
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <Title3 as="h1" block>Job network</Title3>
+        <Body1 block>List your open jobs on Talent OS Jobs. Applications still come to your careers site.</Body1>
       </div>
 
       {settings.sandbox ? (

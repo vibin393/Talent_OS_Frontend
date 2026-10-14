@@ -130,6 +130,7 @@ function CodesTable({
                 {canManage ? (
                   <Input
                     aria-label={`Label for ${r.code}`}
+                    style={{ width: "100%", minWidth: 0 }}
                     value={edit ?? r.label}
                     maxLength={200}
                     onChange={(_, d) => setEdits((e) => ({ ...e, [r.id]: d.value }))}

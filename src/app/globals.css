@@ -19,3 +19,42 @@ body {
     background-color: #141414;
   }
 }
+
+/* Horizontal tab strips (Fluent TabList) scroll within themselves instead of widening the page
+   or being clipped by the main content area. Vertical tab lists are left untouched. Without this,
+   pages with many tabs (e.g. the dashboard's role/P2–P5 strip) force a page-wide horizontal scroll
+   that slides content under the fixed left navigation. */
+.fui-TabList:not([aria-orientation="vertical"]) {
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+/* Fluent Badge is sized for one short word and has a fixed height, so multi-word status labels
+   ("Partially filled", "Submission: Due") wrap and spill out of the rounded pill in narrow table
+   columns. Let every base badge grow to fit its text instead of clipping. CounterBadge and
+   PresenceBadge use their own classes and are unaffected. */
+.fui-Badge {
+  /* !important: Fluent's own atomic classes set a fixed height + zero vertical padding and are
+     injected after this file, so without it a wrapped (2-line) label stays in a 20px pill and the
+     text spills past the rounded border. These let the pill grow to contain its text. */
+  height: auto !important;
+  min-height: 20px;
+  white-space: normal;
+  text-align: center;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  line-height: 1.3 !important;
+}
+
+/* Long unbreakable tokens in a data-grid cell (IDs, API scopes like "document_series:write",
+   emails) otherwise overflow into the next column. `anywhere` lets the token break (and shrinks the
+   cell's min-content so the flex child can actually narrow); min-width:0 lets the cell and its
+   content shrink within the row. */
+.fui-DataGridCell {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.fui-DataGridCell > * {
+  min-width: 0;
+}
