@@ -22,7 +22,9 @@ export type EmbeddedApp = {
 
 const CROAR_URL = process.env.NEXT_PUBLIC_CROAR_URL ?? "http://croar.localhost";
 const FEEDBACK_IQ_URL = process.env.NEXT_PUBLIC_FEEDBACK_IQ_URL ?? "http://feedbackiq.localhost";
-const PORTAL_URL = process.env.NEXT_PUBLIC_PORTAL_URL ?? "http://jobs.localhost";
+// The Portal RECRUITER view lives under /hiring (the seeker site stays standalone, AD-8); the embed
+// CSP (frame-ancestors) is scoped to /hiring too.
+const PORTAL_URL = process.env.NEXT_PUBLIC_PORTAL_URL ?? "http://jobs.localhost/hiring";
 
 export const EMBEDDED_APPS: readonly EmbeddedApp[] = [
   { key: "croar", label: "Croar", url: CROAR_URL, route: "/apps/croar" },
