@@ -46,3 +46,6 @@ export type NewPasswordValues = z.infer<typeof newPasswordSchema>;
 
 export const forgotPasswordSchema = z.object({ tenant_slug: workspace, email });
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
+
+export const findWorkspaceSchema = z.object({ email });
+export type FindWorkspaceValues = z.infer<typeof findWorkspaceSchema>;

@@ -39,6 +39,10 @@ export const authApi = {
     api.post<void>("/api/v1/auth/password-reset/request", body, { skipAuthHandler: true }),
   confirmPasswordReset: (body: PasswordResetConfirm) =>
     api.post<void>("/api/v1/auth/password-reset/confirm", body, { skipAuthHandler: true }),
+  // Phase 2 Story 1.2: enumeration-safe "find my workspace". Always resolves the same way; the backend
+  // emails the workspace link(s) only when the email matches a tenant, and never discloses whether it did.
+  findWorkspace: (email: string) =>
+    api.post<{ status: string }>("/api/v1/public/find-workspace", { email }, { skipAuthHandler: true }),
 };
 
 export const authKeys = {
