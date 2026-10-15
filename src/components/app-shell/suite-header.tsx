@@ -14,11 +14,19 @@ import {
   Tooltip,
   tokens,
 } from "@fluentui/react-components";
-import { Apps20Regular, GridDots20Regular, Navigation20Regular } from "@fluentui/react-icons";
+import { GridDots20Regular, Navigation20Regular } from "@fluentui/react-icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { AuthOut } from "@/lib/api/types";
 import { DEFAULT_APP_PATH } from "@/lib/navigation";
+import {
+  entitledModuleEntries,
+  EXTERNAL_APP_ENTRIES,
+  HOME_ENTRY,
+  MARKETPLACE_ENTRY,
+  type LauncherEntry,
+} from "@/features/entitlements/catalog";
+import { useEntitlements } from "@/features/entitlements/use-entitlements";
 import { GlobalSearch } from "./global-search";
 import { CopilotToggle } from "@/features/copilot/copilot-toggle";
 import { NotificationBell } from "@/features/notifications/notification-bell";
@@ -105,6 +113,19 @@ export function SuiteHeader({
 }) {
   const styles = useStyles();
   const router = useRouter();
+  const entitlements = useEntitlements();
+  // `null` while entitlements load/error -> the catalog fails open and shows every module.
+  const modules = entitlements.data ? new Set(entitlements.data.modules) : null;
+  const moduleEntries = entitledModuleEntries(modules);
+
+  const renderLauncherItem = (entry: LauncherEntry) => {
+    const Icon = entry.icon;
+    return (
+      <MenuItem key={entry.key} icon={<Icon />} onClick={() => router.push(entry.href)}>
+        {entry.label}
+      </MenuItem>
+    );
+  };
 
   return (
     <header className={styles.header}>
@@ -130,10 +151,14 @@ export function SuiteHeader({
           <MenuPopover>
             <MenuList>
               <MenuGroup>
-                <MenuGroupHeader>Apps</MenuGroupHeader>
-                <MenuItem icon={<Apps20Regular />} onClick={() => router.push(DEFAULT_APP_PATH)}>
-                  Talent OS
-                </MenuItem>
+                <MenuGroupHeader>Talent OS</MenuGroupHeader>
+                {renderLauncherItem(HOME_ENTRY)}
+                {moduleEntries.map(renderLauncherItem)}
+              </MenuGroup>
+              <MenuGroup>
+                <MenuGroupHeader>Platform apps</MenuGroupHeader>
+                {EXTERNAL_APP_ENTRIES.map(renderLauncherItem)}
+                {renderLauncherItem(MARKETPLACE_ENTRY)}
               </MenuGroup>
             </MenuList>
           </MenuPopover>

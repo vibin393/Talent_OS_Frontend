@@ -18,6 +18,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { useMyApprovalsCount } from "@/features/approvals/use-my-approvals";
 import type { PermissionMap } from "@/features/auth/permissions";
+import { AI_MODULE, isModuleEntitled, REPORTS_MODULE, sectionEntitled } from "@/features/entitlements/modules";
 import { useMyProposalsCount } from "@/features/proposal-inbox/api";
 import { useTaskSummary } from "@/features/tasks/use-tasks";
 import {
@@ -102,11 +103,14 @@ function ProposalsCounter() {
  */
 export function AppNav({
   permissions,
+  modules,
   open,
   overlay,
   onOpenChange,
 }: {
   permissions: PermissionMap;
+  /** Module keys the tenant's plan includes (Phase 2). `null` = not loaded yet -> show all (fail-open). */
+  modules: ReadonlySet<string> | null;
   open: boolean;
   overlay: boolean;
   onOpenChange: (open: boolean) => void;
@@ -133,17 +137,24 @@ export function AppNav({
 
   const topItems = pick(TOP_NAV_HREFS);
   const bottomItems = pick(BOTTOM_NAV_HREFS);
-  const sections = NAV_SECTIONS.map((s) => ({ ...s, items: pick(s.hrefs) })).filter((s) => s.items.length > 0);
+  // Phase 2: a section shows only when its plan module is entitled (AND the permission filter leaves items).
+  const sections = NAV_SECTIONS.map((s) => ({ ...s, items: pick(s.hrefs) })).filter(
+    (s) => s.items.length > 0 && sectionEntitled(s.value, modules),
+  );
 
   // Anything visible but not pinned or placed in a section still shows top-level, so nothing silently disappears.
   const placed = new Set<string>([...TOP_NAV_HREFS, ...BOTTOM_NAV_HREFS, ...NAV_SECTIONS.flatMap((s) => s.hrefs)]);
   const leftovers = NAV_ITEMS.filter((i) => isVisible(i) && !placed.has(i.href));
 
-  const reportItems = visibleNavItems([REPORTS_NAV_GROUP], permissions).length
-    ? visibleNavItems(REPORTS_NAV_GROUP.items, permissions)
-    : [];
+  const reportItems =
+    isModuleEntitled(REPORTS_MODULE, modules) && visibleNavItems([REPORTS_NAV_GROUP], permissions).length
+      ? visibleNavItems(REPORTS_NAV_GROUP.items, permissions)
+      : [];
   // Epic 65: collapsible "AI" group (Copilot history, AI governance, AI agents).
-  const aiItems = visibleNavItems([AI_NAV_GROUP], permissions).length ? visibleNavItems(AI_NAV_GROUP.items, permissions) : [];
+  const aiItems =
+    isModuleEntitled(AI_MODULE, modules) && visibleNavItems([AI_NAV_GROUP], permissions).length
+      ? visibleNavItems(AI_NAV_GROUP.items, permissions)
+      : [];
 
   // Which collapsible category (section or group) holds the active route — so it opens and highlights.
   const activeCategory =

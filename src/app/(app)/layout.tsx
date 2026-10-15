@@ -24,6 +24,7 @@ import { QueryBoundary } from "@/features/access-denied/query-boundary";
 import { authKeys } from "@/features/auth/api";
 import { ForcedMfaEnrollment } from "@/features/auth/forced-mfa-enrollment";
 import { useMe } from "@/features/auth/use-me";
+import { useEntitlements } from "@/features/entitlements/use-entitlements";
 import { CopilotPanel } from "@/features/copilot/copilot-panel";
 import { errorMessage, isApiError } from "@/lib/api/errors";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -130,6 +131,7 @@ function ShellSkeleton() {
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const styles = useStyles();
   const me = useMe();
+  const entitlements = useEntitlements();
   const queryClient = useQueryClient();
   // Latched while the tenant forces MFA enrolment, so a `me` refetch right after confirming (which clears
   // the flag) does not unmount the one-time recovery codes before the user acknowledged them.
@@ -168,6 +170,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const session = me.data;
   if (!session) return <ShellSkeleton />;
 
+  // Phase 2: the tenant's entitled modules drive the nav. `null` while loading/errored -> show all.
+  const modules = entitlements.data ? new Set(entitlements.data.modules) : null;
+
   if (forcedMfa) {
     return (
       <ForcedMfaEnrollment
@@ -189,7 +194,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <SupportBanner me={session} />
       <SandboxBanner />
       <div className={styles.body}>
-        <AppNav permissions={session.permissions} open={navOpen} overlay={narrow} onOpenChange={setNavOpen} />
+        <AppNav
+          permissions={session.permissions}
+          modules={modules}
+          open={navOpen}
+          overlay={narrow}
+          onOpenChange={setNavOpen}
+        />
         <main id="main" tabIndex={-1} className={styles.main}>
           <NoticeBanner />
           <QueryBoundary>{children}</QueryBoundary>
