@@ -4,12 +4,18 @@ import {
   buildRoleUpdate,
   groupPermissions,
   groupState,
+  moduleAppState,
+  moduleCapCount,
   ROLE_KEY_PATTERN,
   roleKeyFromName,
+  sameModuleCaps,
   setGrantScope,
   toggleGrant,
   toggleGroup,
+  toggleModuleApp,
+  toggleModuleCap,
 } from "./role-grants";
+import type { ModuleAppOut } from "@/lib/api/types";
 
 const ALL = ["own", "team", "bu", "tenant"];
 const candRead: PermissionOut = { key: "candidate:read", group: "Candidates", description: "View", scopes: ALL };
@@ -24,6 +30,7 @@ const role = (over: Partial<RoleOut> = {}): RoleOut => ({
   is_system: false,
   is_immutable: false,
   permissions: { "candidate:read": "team" },
+  module_caps: {},
   user_count: 0,
   created_at: "2026-09-30T00:00:00Z",
   updated_at: "2026-09-30T00:00:00Z",
@@ -76,7 +83,13 @@ describe("roleKeyFromName", () => {
 });
 
 describe("buildRoleUpdate", () => {
-  const draft = { key: "sourcer", name: "Sourcer", description: "", permissions: { "candidate:read": "team" } };
+  const draft = {
+    key: "sourcer",
+    name: "Sourcer",
+    description: "",
+    permissions: { "candidate:read": "team" },
+    moduleCaps: {},
+  };
 
   it("is empty when nothing changed", () => {
     expect(buildRoleUpdate(role(), draft)).toEqual({});
@@ -103,5 +116,47 @@ describe("buildRoleUpdate", () => {
       buildRoleUpdate(role({ is_system: true, is_immutable: true }), { ...draft, permissions: {} }),
     ).toEqual({});
     expect(buildRoleUpdate(role(), { ...draft, key: "hunter" })).toEqual({ key: "hunter" });
+  });
+
+  it("sends module_caps only when they changed (never for an immutable role)", () => {
+    expect(buildRoleUpdate(role(), { ...draft, moduleCaps: { croar: ["sourcing"] } })).toEqual({
+      module_caps: { croar: ["sourcing"] },
+    });
+    expect(buildRoleUpdate(role({ module_caps: { croar: ["sourcing"] } }), draft)).toEqual({ module_caps: {} });
+    expect(
+      buildRoleUpdate(role({ is_system: true, is_immutable: true }), { ...draft, moduleCaps: { croar: ["pilot"] } }),
+    ).toEqual({});
+  });
+});
+
+describe("module capabilities", () => {
+  const croar: ModuleAppOut = {
+    key: "croar",
+    label: "Croar",
+    description: "",
+    capabilities: [
+      { key: "pilot", label: "Pilot", description: "" },
+      { key: "sourcing", label: "Sourcing", description: "" },
+    ],
+  };
+
+  it("toggles a single capability and drops empty apps", () => {
+    expect(toggleModuleCap({}, "croar", "sourcing", true)).toEqual({ croar: ["sourcing"] });
+    expect(toggleModuleCap({ croar: ["sourcing"] }, "croar", "sourcing", false)).toEqual({});
+  });
+
+  it("toggles a whole app and reports state", () => {
+    expect(toggleModuleApp({}, croar, true)).toEqual({ croar: ["pilot", "sourcing"] });
+    expect(toggleModuleApp({ croar: ["pilot"] }, croar, false)).toEqual({});
+    expect(moduleAppState({}, croar)).toBe(false);
+    expect(moduleAppState({ croar: ["pilot"] }, croar)).toBe("mixed");
+    expect(moduleAppState({ croar: ["pilot", "sourcing"] }, croar)).toBe(true);
+  });
+
+  it("counts caps and compares maps ignoring order", () => {
+    expect(moduleCapCount({ croar: ["pilot", "sourcing"], portal: ["jobs"] })).toBe(3);
+    expect(sameModuleCaps({ croar: ["pilot", "sourcing"] }, { croar: ["sourcing", "pilot"] })).toBe(true);
+    expect(sameModuleCaps({ croar: ["pilot"] }, { croar: ["sourcing"] })).toBe(false);
+    expect(sameModuleCaps({}, { croar: ["pilot"] })).toBe(false);
   });
 });

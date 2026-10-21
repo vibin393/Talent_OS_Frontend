@@ -10,6 +10,9 @@ import {
   DialogSurface,
   DialogTitle,
   Spinner,
+  Text,
+  Textarea,
+  tokens,
 } from "@fluentui/react-components";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -32,6 +35,10 @@ export function InviteUserDialog({ onClose }: { onClose: () => void }) {
   const teams = useTeamLookup(canReadTeams);
   const units = useBusinessUnitLookup(canReadBUs);
   const [formError, setFormError] = useState<string | null>(null);
+  // After a successful invite we show the accept-invite link (copyable) instead of closing, so the
+  // admin can share it directly — essential in local/dev where no email is sent.
+  const [invited, setInvited] = useState<{ email: string; inviteUrl: string | null } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const form = useForm<InviteValues>({
     resolver: zodResolver(inviteSchema),
@@ -53,14 +60,61 @@ export function InviteUserDialog({ onClose }: { onClose: () => void }) {
   async function onSubmit(values: InviteValues) {
     setFormError(null);
     try {
-      await invite.mutateAsync(values);
-      onClose();
+      const inv = await invite.mutateAsync(values);
+      const url = (inv as { invite_url?: string | null }).invite_url ?? null;
+      setInvited({ email: inv.email, inviteUrl: url });
     } catch (e) {
       if (!applyServerFieldErrors(e, form.setError, ["email", "name", "role_ids"])) setFormError(adminErrorMessage(e));
     }
   }
 
   const busy = form.formState.isSubmitting;
+
+  if (invited) {
+    return (
+      <Dialog open onOpenChange={(_, d) => !d.open && onClose()}>
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>Invitation created</DialogTitle>
+            <DialogContent className={styles.form}>
+              <Text>
+                An invitation was created for <strong>{invited.email}</strong> (an email is also sent).
+                Share this link so they can set a password and sign in:
+              </Text>
+              {invited.inviteUrl ? (
+                <>
+                  <Textarea value={invited.inviteUrl} readOnly resize="vertical" rows={2} />
+                  <Button
+                    appearance="secondary"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(invited.inviteUrl ?? "");
+                        setCopied(true);
+                      } catch {
+                        /* clipboard unavailable — the link is selectable above */
+                      }
+                    }}
+                  >
+                    {copied ? "Copied" : "Copy link"}
+                  </Button>
+                </>
+              ) : (
+                <Text style={{ color: tokens.colorNeutralForeground3 }}>
+                  The invite link wasn’t returned; the invitee will receive it by email.
+                </Text>
+              )}
+            </DialogContent>
+            <DialogActions>
+              <Button appearance="primary" onClick={onClose}>
+                Done
+              </Button>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
+    );
+  }
+
   return (
     <Dialog open onOpenChange={(_, d) => !d.open && !busy && onClose()}>
       <DialogSurface>

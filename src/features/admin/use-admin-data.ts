@@ -20,6 +20,16 @@ export function usePermissionCatalog(enabled = true) {
   });
 }
 
+/** Module capability catalog (Croar / Feedback IQ / Job Portal) for the role editor. Needs `role:read`. */
+export function useModuleCapabilityCatalog(enabled = true) {
+  return useQuery({
+    queryKey: adminKeys.moduleCapabilities,
+    queryFn: ({ signal }) => adminApi.moduleCapabilities(signal),
+    staleTime: 10 * 60_000,
+    enabled,
+  });
+}
+
 /** First page (max size) of teams for pickers. Needs `team:read`. */
 export function useTeamLookup(enabled = true) {
   return useQuery({

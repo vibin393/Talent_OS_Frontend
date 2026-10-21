@@ -25,7 +25,7 @@ import { useState } from "react";
 import { authKeys } from "@/features/auth/api";
 import { SCOPE_LABELS, type Scope } from "@/features/auth/permissions";
 import { fieldErrors, isApiError } from "@/lib/api/errors";
-import type { PermissionOut, RoleOut } from "@/lib/api/types";
+import type { ModuleAppOut, ModuleCaps, PermissionOut, RoleOut } from "@/lib/api/types";
 import { adminApi, adminKeys } from "./api";
 import { adminErrorMessage } from "./errors";
 import {
@@ -33,15 +33,20 @@ import {
   type Grants,
   groupPermissions,
   groupState,
+  hasModuleCap,
+  moduleAppState,
+  moduleCapCount,
   type RoleDraft,
   roleKeyFromName,
   setGrantScope,
   toggleGrant,
   toggleGroup,
+  toggleModuleApp,
+  toggleModuleCap,
 } from "./role-grants";
 import { optionalText, roleSchema } from "./schemas";
 import { DetailsDrawer, ErrorBar, GridSkeleton, useAdminStyles } from "./ui";
-import { useAdminMutation, usePermissionCatalog } from "./use-admin-data";
+import { useAdminMutation, useModuleCapabilityCatalog, usePermissionCatalog } from "./use-admin-data";
 
 const useStyles = makeStyles({
   permRow: {
@@ -77,6 +82,7 @@ export function RoleDrawer({
   const styles = useAdminStyles();
   const local = useStyles();
   const catalog = usePermissionCatalog();
+  const moduleCatalog = useModuleCapabilityCatalog();
   const readOnly = !canManage || !!role?.is_immutable;
 
   const [draft, setDraft] = useState<RoleDraft>(() => ({
@@ -84,12 +90,15 @@ export function RoleDrawer({
     key: role?.key ?? "",
     description: role?.description ?? "",
     permissions: { ...(role?.permissions ?? {}) },
+    moduleCaps: { ...(role?.module_caps ?? {}) },
   }));
   const [keyTouched, setKeyTouched] = useState(!!role);
   const [errors, setErrors] = useState<FormErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
 
   const setGrants = (fn: (g: Grants) => Grants) => setDraft((d) => ({ ...d, permissions: fn(d.permissions) }));
+  const setModuleCaps = (fn: (c: ModuleCaps) => ModuleCaps) =>
+    setDraft((d) => ({ ...d, moduleCaps: fn(d.moduleCaps) }));
 
   const save = useAdminMutation({
     mutationFn: () =>
@@ -100,6 +109,7 @@ export function RoleDrawer({
             name: draft.name.trim(),
             description: optionalText(draft.description),
             permissions: draft.permissions,
+            module_caps: draft.moduleCaps,
           }),
     invalidate: [adminKeys.roles, adminKeys.users, authKeys.me],
     success: (r) => (role ? `Saved ${r.name}` : `Created ${r.name}`),
@@ -269,8 +279,89 @@ export function RoleDrawer({
             })}
           </Accordion>
         )}
+
+        <Subtitle2 as="h3" className={styles.sectionTitle}>
+          Module access ({moduleCapCount(draft.moduleCaps)})
+        </Subtitle2>
+        <Text size={200} className={styles.muted}>
+          Capabilities this role grants in the other suite apps. They travel in the user&apos;s single sign-on.
+        </Text>
+        {moduleCatalog.isPending ? (
+          <GridSkeleton rows={3} />
+        ) : moduleCatalog.isError ? (
+          <ErrorBar message={adminErrorMessage(moduleCatalog.error)} title="Could not load module capabilities." />
+        ) : (
+          <Accordion multiple collapsible defaultOpenItems={(moduleCatalog.data ?? []).map((a) => a.key)}>
+            {(moduleCatalog.data ?? []).map((app) => {
+              const state = moduleAppState(draft.moduleCaps, app);
+              const count = app.capabilities.filter((c) => hasModuleCap(draft.moduleCaps, app.key, c.key)).length;
+              return (
+                <AccordionItem key={app.key} value={app.key}>
+                  <AccordionHeader>
+                    <span className={local.groupHeader}>
+                      {app.label}
+                      <Text size={200} className={local.count}>
+                        {count} of {app.capabilities.length}
+                      </Text>
+                    </span>
+                  </AccordionHeader>
+                  <AccordionPanel>
+                    {!readOnly && (
+                      <Checkbox
+                        label={`All ${app.label} access`}
+                        checked={state}
+                        onChange={(_, d) => setModuleCaps((c) => toggleModuleApp(c, app, d.checked === true))}
+                      />
+                    )}
+                    {app.capabilities.map((cap) => (
+                      <ModuleCapRow
+                        key={cap.key}
+                        cap={cap}
+                        checked={hasModuleCap(draft.moduleCaps, app.key, cap.key)}
+                        readOnly={readOnly}
+                        onToggle={(checked) => setModuleCaps((c) => toggleModuleCap(c, app.key, cap.key, checked))}
+                      />
+                    ))}
+                  </AccordionPanel>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
+        )}
       </div>
     </DetailsDrawer>
+  );
+}
+
+function ModuleCapRow({
+  cap,
+  checked,
+  readOnly,
+  onToggle,
+}: {
+  cap: ModuleAppOut["capabilities"][number];
+  checked: boolean;
+  readOnly: boolean;
+  onToggle: (checked: boolean) => void;
+}) {
+  const styles = useStyles();
+  const admin = useAdminStyles();
+  return (
+    <div className={styles.permRow}>
+      <Checkbox
+        checked={checked}
+        disabled={readOnly}
+        onChange={(_, d) => onToggle(d.checked === true)}
+        label={
+          <span className={styles.permLabel}>
+            <span>{cap.description}</span>
+            <Text size={200} className={admin.muted}>
+              {cap.key}
+            </Text>
+          </span>
+        }
+      />
+    </div>
   );
 }
 

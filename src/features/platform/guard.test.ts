@@ -4,7 +4,14 @@ import type { OperatorOut } from "@/lib/api/types";
 import { daysUntil, incidentHoursLeft, needsEmergencyOverride } from "./errors";
 import { PLATFORM_HOME, platformGuard, platformLoginUrl, safePlatformNext } from "./guard";
 
-const op = (mfa: boolean): OperatorOut => ({ id: "o", email: "ops@x.test", name: "Ops", mfa_enabled: mfa, last_login_at: null });
+const op = (mfa: boolean, mfaEnforced = true): OperatorOut => ({
+  id: "o",
+  email: "ops@x.test",
+  name: "Ops",
+  mfa_enabled: mfa,
+  last_login_at: null,
+  mfa_enforced: mfaEnforced,
+});
 
 describe("platform route guard", () => {
   it("sends signed-out operators to the platform login", () => {
@@ -14,9 +21,13 @@ describe("platform route guard", () => {
   it("waits while loading", () => {
     expect(platformGuard({ mePending: true, me: undefined, meError: null })).toBe("loading");
   });
-  it("always forces MFA enrolment for operators without a second factor", () => {
+  it("forces MFA enrolment for operators without a second factor where MFA is enforced", () => {
     expect(platformGuard({ mePending: false, me: op(false), meError: null })).toBe("enroll");
     expect(platformGuard({ mePending: false, me: op(true), meError: null })).toBe("ready");
+  });
+  it("lets an unenrolled operator in when MFA is not enforced (local development)", () => {
+    expect(platformGuard({ mePending: false, me: op(false, false), meError: null })).toBe("ready");
+    expect(platformGuard({ mePending: false, me: op(true, false), meError: null })).toBe("ready");
   });
 });
 

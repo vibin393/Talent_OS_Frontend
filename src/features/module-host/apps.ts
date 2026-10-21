@@ -32,6 +32,15 @@ export const EMBEDDED_APPS: readonly EmbeddedApp[] = [
   { key: "portal", label: "Job Portal", url: PORTAL_URL, route: "/apps/portal" },
 ];
 
+// Host-only base for DEEP-embedding an existing app page (native unification): the contextual
+// sidebar links to `/apps/{app}/m/<deep path>` and the catch-all route embeds `${EMBED_BASE}/<deep path>`
+// with the app's own chrome hidden. Portal deep paths already include `/hiring`, so its base is host-only.
+export const EMBED_BASE: Record<EmbeddedAppKey, string> = {
+  croar: CROAR_URL,
+  "feedback-iq": FEEDBACK_IQ_URL,
+  portal: process.env.NEXT_PUBLIC_PORTAL_HOST ?? "http://jobs.localhost",
+};
+
 const byKey = new Map(EMBEDDED_APPS.map((a) => [a.key, a] as const));
 
 export function embeddedApp(key: EmbeddedAppKey): EmbeddedApp {

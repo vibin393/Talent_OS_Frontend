@@ -126,6 +126,13 @@ export const ADMIN_SECTIONS: readonly AdminSection[] = [
     permission: "email_template:manage",
   },
   {
+    href: "/admin/email-settings",
+    label: "Email settings",
+    description: "Send outbound email from your own SMTP server and domain, or the shared platform mailbox.",
+    permission: "settings:read",
+    anyOf: ["settings:manage"],
+  },
+  {
     href: "/admin/messaging",
     label: "Messaging",
     description: "SMS and WhatsApp providers, DLT / approved templates, quiet hours, opt-outs and the manual send queue.",

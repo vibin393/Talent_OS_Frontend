@@ -43,7 +43,13 @@ export const authApi = {
   // emails the workspace link(s) only when the email matches a tenant, and never discloses whether it did.
   findWorkspace: (email: string) =>
     api.post<{ status: string }>("/api/v1/public/find-workspace", { email }, { skipAuthHandler: true }),
+  // Self-serve "Create your company": provisions a new workspace and returns the admin invite link.
+  // Local-first: the backend returns the invite link (shown on the success page) instead of emailing it.
+  signup: (body: SignupBody) => api.post<SignupResult>("/api/v1/public/signup", body, { skipAuthHandler: true }),
 };
+
+export type SignupBody = { company_name: string; slug: string; admin_email: string; admin_name: string };
+export type SignupResult = { tenant_slug: string; admin_email: string; invite_url: string };
 
 export const authKeys = {
   me: ["auth", "me"] as const,

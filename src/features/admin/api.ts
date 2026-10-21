@@ -6,6 +6,7 @@ import type {
   BusinessUnitOut,
   BusinessUnitUpdate,
   InvitationAdminOut,
+  ModuleAppOut,
   Page,
   PermissionOut,
   RoleCreate,
@@ -26,6 +27,8 @@ const A = "/api/v1/admin";
 
 export const adminApi = {
   permissions: (signal?: AbortSignal) => api.get<PermissionOut[]>("/api/v1/permissions", { signal }),
+  moduleCapabilities: (signal?: AbortSignal) =>
+    api.get<ModuleAppOut[]>(`${A}/module-capabilities`, { signal }),
 
   listUsers: (filters: UserListFilters, page: number, pageSize: number, signal?: AbortSignal) =>
     api.get<Page<AdminUserOut>>(`${A}/users?${userListQuery(filters, page, pageSize)}`, { signal }),
@@ -69,6 +72,7 @@ export const adminApi = {
 export const adminKeys = {
   all: ["admin"] as const,
   permissions: ["admin", "permissions"] as const,
+  moduleCapabilities: ["admin", "module-capabilities"] as const,
   users: ["admin", "users"] as const,
   userList: (filters: UserListFilters, page: number, pageSize: number) =>
     ["admin", "users", "list", filters, page, pageSize] as const,

@@ -49,3 +49,30 @@ export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
 
 export const findWorkspaceSchema = z.object({ email });
 export type FindWorkspaceValues = z.infer<typeof findWorkspaceSchema>;
+
+// Self-serve "Create your company". The slug matches the backend rule `^[a-z0-9-]{2,40}$`.
+const companySlug = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .min(2, "Use at least 2 characters")
+  .max(40, "Workspace ID is too long")
+  .regex(/^[a-z0-9-]+$/, "Use only lowercase letters, digits and hyphens");
+
+export const signupSchema = z.object({
+  company_name: z.string().trim().min(1, "Enter your company name").max(200, "Name is too long"),
+  slug: companySlug,
+  admin_name: z.string().trim().min(1, "Enter your name").max(200, "Name is too long"),
+  admin_email: email,
+});
+export type SignupValues = z.infer<typeof signupSchema>;
+
+/** Suggest a workspace slug from a company name: lowercase, hyphenate, strip to the allowed charset. */
+export function slugFromName(name: string): string {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40);
+}

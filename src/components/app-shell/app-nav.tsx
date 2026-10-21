@@ -15,9 +15,11 @@ import {
   Text,
   tokens,
 } from "@fluentui/react-components";
+import { ArrowLeft20Filled, ArrowLeft20Regular, bundleIcon } from "@fluentui/react-icons";
 import { usePathname, useRouter } from "next/navigation";
 import { useMyApprovalsCount } from "@/features/approvals/use-my-approvals";
 import type { PermissionMap } from "@/features/auth/permissions";
+import { MODULE_ICONS, MODULE_NAVS, moduleForPath } from "@/features/modules/module-nav";
 import { AI_MODULE, isModuleEntitled, REPORTS_MODULE, sectionEntitled } from "@/features/entitlements/modules";
 import { useMyProposalsCount } from "@/features/proposal-inbox/api";
 import { useTaskSummary } from "@/features/tasks/use-tasks";
@@ -45,6 +47,8 @@ const useStyles = makeStyles({
     gap: tokens.spacingHorizontalS,
   },
 });
+
+const BackIcon = bundleIcon(ArrowLeft20Filled, ArrowLeft20Regular);
 
 function isModifiedClick(event: React.MouseEvent): boolean {
   return event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
@@ -120,6 +124,12 @@ export function AppNav({
   const router = useRouter();
   const pendingApprovals = useMyApprovalsCount();
   const activeHref = activeNavHref(pathname) ?? "";
+  // Native unification: inside a module (/apps/{module}/…) the sidebar swaps to that module's sections.
+  const activeModule = moduleForPath(pathname);
+  const moduleNav = activeModule ? MODULE_NAVS[activeModule] : null;
+  const activeModuleCategory =
+    moduleNav?.groups.find((g) => g.items.some((i) => i.href === pathname))?.title ?? "";
+  const DashIcon = MODULE_ICONS.dashboard;
 
   const go = (href: string) => (event: React.MouseEvent) => {
     if (isModifiedClick(event)) return;
@@ -198,10 +208,18 @@ export function AppNav({
       type={overlay ? "overlay" : "inline"}
       open={open}
       onOpenChange={(_, data) => onOpenChange(data.open)}
-      selectedValue={activeHref}
+      selectedValue={moduleNav ? pathname : activeHref}
       // Always a string: switching between undefined and a value flips Fluent's controlled state.
-      selectedCategoryValue={activeCategory}
-      defaultOpenCategories={activeCategory ? [activeCategory] : []}
+      selectedCategoryValue={moduleNav ? activeModuleCategory : activeCategory}
+      defaultOpenCategories={
+        moduleNav
+          ? activeModuleCategory
+            ? [activeModuleCategory]
+            : []
+          : activeCategory
+            ? [activeCategory]
+            : []
+      }
       aria-label="Main"
       className={overlay ? undefined : styles.inline}
     >
@@ -209,18 +227,43 @@ export function AppNav({
         <NavDrawerHeader className={styles.overlayHeader}>
           <Hamburger aria-label="Close navigation" onClick={() => onOpenChange(false)} />
           <Text weight="semibold" size={400}>
-            Talent OS
+            {moduleNav ? moduleNav.label : "Talent OS"}
           </Text>
         </NavDrawerHeader>
       )}
-      <NavDrawerBody>
-        {topItems.map(renderTop)}
-        {sections.map((s) => renderCategory(s.value, s.label, s.icon, s.items))}
-        {leftovers.map(renderTop)}
-        {renderCategory(REPORTS_NAV_GROUP.value, REPORTS_NAV_GROUP.label, REPORTS_NAV_GROUP.icon, reportItems)}
-        {renderCategory(AI_NAV_GROUP.value, AI_NAV_GROUP.label, AI_NAV_GROUP.icon, aiItems)}
-        {bottomItems.map(renderTop)}
-      </NavDrawerBody>
+      {moduleNav ? (
+        // Native unification: the active module owns the sidebar; "Back" returns to the Talent OS home.
+        <NavDrawerBody>
+          <NavItem href="/dashboard" value="__back__" icon={<BackIcon />} onClick={go("/dashboard")}>
+            Talent OS home
+          </NavItem>
+          <NavItem
+            href={moduleNav.dashboardHref}
+            value={moduleNav.dashboardHref}
+            icon={<DashIcon />}
+            onClick={go(moduleNav.dashboardHref)}
+          >
+            Dashboard
+          </NavItem>
+          {moduleNav.groups.map((group) =>
+            renderCategory(
+              group.title ?? group.items[0]?.href ?? "",
+              group.title ?? "",
+              group.icon,
+              group.items,
+            ),
+          )}
+        </NavDrawerBody>
+      ) : (
+        <NavDrawerBody>
+          {topItems.map(renderTop)}
+          {sections.map((s) => renderCategory(s.value, s.label, s.icon, s.items))}
+          {leftovers.map(renderTop)}
+          {renderCategory(REPORTS_NAV_GROUP.value, REPORTS_NAV_GROUP.label, REPORTS_NAV_GROUP.icon, reportItems)}
+          {renderCategory(AI_NAV_GROUP.value, AI_NAV_GROUP.label, AI_NAV_GROUP.icon, aiItems)}
+          {bottomItems.map(renderTop)}
+        </NavDrawerBody>
+      )}
     </NavDrawer>
   );
 }

@@ -21,9 +21,14 @@ export type UserUpdate = Schemas["UserUpdate"];
 export type InvitationAdminOut = Schemas["InvitationAdminOut"];
 // Epic 14 (FR-81): `sensitive` until gen:api regenerates the schema.
 export type PermissionOut = Schemas["PermissionOut"] & { sensitive?: boolean };
-export type RoleOut = Schemas["RoleOut"];
-export type RoleCreate = Schemas["RoleCreate"];
-export type RoleUpdate = Schemas["RoleUpdate"];
+// Unified RBAC: per-module capability grants ({ app: [cap, ...] }), until gen:api regenerates the schema.
+export type ModuleCaps = Record<string, string[]>;
+export type ModuleCapabilityOut = { key: string; label: string; description: string };
+export type ModuleAppOut = { key: string; label: string; description: string; capabilities: ModuleCapabilityOut[] };
+type WithModuleCaps = { module_caps?: ModuleCaps };
+export type RoleOut = Schemas["RoleOut"] & WithModuleCaps;
+export type RoleCreate = Schemas["RoleCreate"] & WithModuleCaps;
+export type RoleUpdate = Schemas["RoleUpdate"] & WithModuleCaps;
 export type TeamOut = Schemas["TeamOut"];
 export type TeamDetailOut = Schemas["TeamDetailOut"];
 export type TeamMemberOut = Schemas["TeamMemberOut"];
@@ -211,10 +216,25 @@ export type PlatformNoticeCreate = Schemas["app__schemas__platform__NoticeCreate
 export type SubProcessorOut = Schemas["SubProcessorOut"];
 export type SubProcessorIn = Schemas["SubProcessorIn"];
 export type SubProcessorUpdate = Schemas["SubProcessorUpdate"];
-export type OperatorOut = Schemas["OperatorOut"];
+// `mfa_enforced` until gen:api regenerates the schema: false in development, so the console skips the
+// enrol-MFA gate for a locally seeded super-admin (see backend Settings.platform_operator_mfa_enforced).
+export type OperatorOut = Schemas["OperatorOut"] & { mfa_enforced?: boolean };
 export type OperatorLogin = Schemas["OperatorLogin"];
 export type PlatformTenantOut = Schemas["TenantOut"];
 export type PlatformTenantCreate = Schemas["TenantCreate"];
+// Super-admin cross-app "create company" + enriched company list (new endpoints; typed locally until
+// gen:api regenerates the schema).
+export type CompanyCreate = { company_name: string; slug: string; admin_name: string; admin_email: string };
+export type CompanyProvisionOut = { tenant_slug: string; admin_email: string; invite_url: string };
+export type CompanyAdminOut = {
+  id: string;
+  name: string;
+  slug: string;
+  status: string;
+  created_at: string;
+  plan: string | null;
+  admin_email: string | null;
+};
 export type TenantLifecycleOut = Schemas["TenantLifecycleOut"];
 export type TenantExportOut = Schemas["TenantExportOut"];
 export type TenantOffboardIn = Schemas["TenantOffboardIn"];

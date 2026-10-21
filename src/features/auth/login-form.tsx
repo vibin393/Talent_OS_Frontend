@@ -150,6 +150,9 @@ export function LoginForm({ next, mfa, ssoError }: { next?: string; mfa?: boolea
       <AppLink href="/find-workspace" className={styles.center}>
         Find my workspace
       </AppLink>
+      <AppLink href="/signup" className={styles.center}>
+        Create a company
+      </AppLink>
     </form>
   );
 }

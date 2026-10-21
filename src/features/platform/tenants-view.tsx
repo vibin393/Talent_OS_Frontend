@@ -14,7 +14,6 @@ import {
   Field,
   Input,
   makeStyles,
-  SpinButton,
   Spinner,
   type TableColumnDefinition,
   Text,
@@ -22,47 +21,52 @@ import {
   ToolbarButton,
   tokens,
 } from "@fluentui/react-components";
-import { Add20Regular, ArrowClockwise20Regular } from "@fluentui/react-icons";
+import { Add20Regular, ArrowClockwise20Regular, Checkmark20Filled, Copy20Regular } from "@fluentui/react-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AppLink } from "@/components/app-link";
 import { PageHeader } from "@/components/app-shell/page-header";
 import { useAppToast } from "@/components/toast";
+import { slugFromName } from "@/features/auth/schemas";
 import { AdminGrid } from "@/features/admin/admin-grid";
 import { ErrorBar, formatDateTime, PagingBar, useAdminStyles } from "@/features/admin/ui";
-import { fieldErrors } from "@/lib/api/errors";
+import { errorMessage, fieldErrors, isApiError } from "@/lib/api/errors";
 import { platformApi, platformKeys } from "@/lib/api/platform-client";
-import type { PlatformTenantOut, TenantLifecycleOut } from "@/lib/api/types";
+import type { CompanyAdminOut, CompanyProvisionOut, PlatformTenantOut, TenantLifecycleOut } from "@/lib/api/types";
 import { platformErrorMessage, TENANT_STATUS_COLORS } from "./errors";
 
 const PAGE_SIZE = 50;
 
-export type TenantRow = PlatformTenantOut & Partial<Pick<TenantLifecycleOut, "ai_budget" | "ai_usage_percent" | "delete_after">>;
+export type TenantRow = PlatformTenantOut &
+  Partial<Pick<TenantLifecycleOut, "ai_budget" | "ai_usage_percent" | "delete_after">> & {
+    plan?: string | null;
+    admin_email?: string | null;
+  };
 
-export function joinTenants(tenants: readonly PlatformTenantOut[], overview: readonly TenantLifecycleOut[] | undefined): TenantRow[] {
+export function joinTenants(
+  tenants: readonly PlatformTenantOut[],
+  overview: readonly TenantLifecycleOut[] | undefined,
+  companies: readonly CompanyAdminOut[] | undefined,
+): TenantRow[] {
   const byId = new Map((overview ?? []).map((o) => [o.id, o]));
+  const infoById = new Map((companies ?? []).map((c) => [c.id, c]));
   return tenants.map((t) => {
     const o = byId.get(t.id);
-    return o ? { ...t, status: o.status, ai_budget: o.ai_budget, ai_usage_percent: o.ai_usage_percent, delete_after: o.delete_after } : t;
+    const info = infoById.get(t.id);
+    return {
+      ...t,
+      ...(o ? { status: o.status, ai_budget: o.ai_budget, ai_usage_percent: o.ai_usage_percent, delete_after: o.delete_after } : {}),
+      plan: info?.plan ?? null,
+      admin_email: info?.admin_email ?? null,
+    };
   });
 }
 
-/** Tenant slug from a name: lowercase letters, digits and single hyphens. */
-export function slugify(name: string): string {
-  return name
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 63);
-}
-
-/** `/platform/tenants`: all tenants with lifecycle status and AI usage, plus the Provision wizard. */
+/** `/platform/tenants`: every company on the platform (incl. self-serve signups), plus cross-app create. */
 export function TenantsView() {
   const styles = useAdminStyles();
   const [page, setPage] = useState(1);
-  const [provisioning, setProvisioning] = useState(false);
+  const [creating, setCreating] = useState(false);
   const tenants = useQuery({
     queryKey: platformKeys.tenantList(page),
     queryFn: ({ signal }) => platformApi.tenants(page, PAGE_SIZE, signal),
@@ -73,16 +77,21 @@ export function TenantsView() {
     queryFn: ({ signal }) => platformApi.tenantsOverview(page, PAGE_SIZE, signal),
     placeholderData: (prev) => prev,
   });
-  const rows = tenants.data ? joinTenants(tenants.data.items, overview.data?.items) : undefined;
+  const companies = useQuery({
+    queryKey: platformKeys.companies,
+    queryFn: ({ signal }) => platformApi.companies(signal),
+    placeholderData: (prev) => prev,
+  });
+  const rows = tenants.data ? joinTenants(tenants.data.items, overview.data?.items, companies.data) : undefined;
 
   const columns: TableColumnDefinition<TenantRow>[] = [
     createTableColumn({
       columnId: "name",
       compare: (a, b) => a.name.localeCompare(b.name),
-      renderHeaderCell: () => "Name",
+      renderHeaderCell: () => "Company",
       renderCell: (t) => <AppLink href={`/platform/tenants/${t.id}`}>{t.name}</AppLink>,
     }),
-    createTableColumn({ columnId: "slug", compare: (a, b) => a.slug.localeCompare(b.slug), renderHeaderCell: () => "Slug", renderCell: (t) => t.slug }),
+    createTableColumn({ columnId: "slug", compare: (a, b) => a.slug.localeCompare(b.slug), renderHeaderCell: () => "Workspace", renderCell: (t) => t.slug }),
     createTableColumn({
       columnId: "status",
       compare: (a, b) => a.status.localeCompare(b.status),
@@ -93,18 +102,23 @@ export function TenantsView() {
         </Badge>
       ),
     }),
-    createTableColumn({ columnId: "seats", compare: (a, b) => a.seat_limit - b.seat_limit, renderHeaderCell: () => "Seats", renderCell: (t) => t.seat_limit.toLocaleString() }),
     createTableColumn({
-      columnId: "ai",
-      compare: (a, b) => (a.ai_usage_percent ?? -1) - (b.ai_usage_percent ?? -1),
-      renderHeaderCell: () => "AI usage",
+      columnId: "admin_email",
+      compare: (a, b) => (a.admin_email ?? "").localeCompare(b.admin_email ?? ""),
+      renderHeaderCell: () => "Admin email",
+      renderCell: (t) => (t.admin_email ? <Text>{t.admin_email}</Text> : <Text italic>—</Text>),
+    }),
+    createTableColumn({
+      columnId: "plan",
+      compare: (a, b) => (a.plan ?? "").localeCompare(b.plan ?? ""),
+      renderHeaderCell: () => "Plan",
       renderCell: (t) =>
-        t.ai_usage_percent === null || t.ai_usage_percent === undefined ? (
-          <Text>{t.ai_budget === null || t.ai_budget === undefined ? "No limit" : "—"}</Text>
-        ) : (
-          <Badge appearance="ghost" color={t.ai_usage_percent >= 100 ? "danger" : t.ai_usage_percent >= 80 ? "warning" : "informative"}>
-            {Math.round(t.ai_usage_percent)}%
+        t.plan ? (
+          <Badge appearance="ghost" color="brand">
+            {t.plan.charAt(0).toUpperCase() + t.plan.slice(1)}
           </Badge>
+        ) : (
+          <Text italic>—</Text>
         ),
     }),
     createTableColumn({ columnId: "created", compare: (a, b) => a.created_at.localeCompare(b.created_at), renderHeaderCell: () => "Created", renderCell: (t) => formatDateTime(t.created_at) }),
@@ -112,16 +126,17 @@ export function TenantsView() {
 
   return (
     <>
-      <PageHeader title="Tenants" subtitle="Every organization on this Talent OS installation." />
-      <Toolbar aria-label="Tenant commands" className={styles.toolbar}>
-        <ToolbarButton appearance="primary" icon={<Add20Regular />} onClick={() => setProvisioning(true)}>
-          Provision tenant
+      <PageHeader title="Companies" subtitle="Every organization on the unified platform — operator-created and self-serve signups." />
+      <Toolbar aria-label="Company commands" className={styles.toolbar}>
+        <ToolbarButton appearance="primary" icon={<Add20Regular />} onClick={() => setCreating(true)}>
+          Create company
         </ToolbarButton>
         <ToolbarButton
           icon={<ArrowClockwise20Regular />}
           onClick={() => {
             void tenants.refetch();
             void overview.refetch();
+            void companies.refetch();
           }}
         >
           Refresh
@@ -133,190 +148,163 @@ export function TenantsView() {
         getRowId={(t) => t.id}
         loading={tenants.isPending}
         error={tenants.error}
-        emptyText="No tenants yet. Provision the first one."
-        label="Tenants"
+        emptyText="No companies yet. Create the first one."
+        label="Companies"
         sortable
         footer={tenants.data && <PagingBar page={page} pageSize={PAGE_SIZE} total={tenants.data.total} onPageChange={setPage} busy={tenants.isFetching} />}
       />
-      {provisioning && <ProvisionWizard onClose={() => setProvisioning(false)} />}
+      {creating && <CreateCompanyDialog onClose={() => setCreating(false)} />}
     </>
   );
 }
 
-const STEPS = ["Organization", "Administrator", "Review"] as const;
-
-const useWizardStyles = makeStyles({
-  steps: { display: "flex", gap: tokens.spacingHorizontalL, marginBottom: tokens.spacingVerticalS, flexWrap: "wrap" },
-  step: { color: tokens.colorNeutralForeground3 },
-  current: { color: tokens.colorBrandForeground1, fontWeight: tokens.fontWeightSemibold },
+const useDialogStyles = makeStyles({
   content: { display: "flex", flexDirection: "column", gap: tokens.spacingVerticalM },
-  review: {
-    display: "grid",
-    gridTemplateColumns: "max-content 1fr",
-    columnGap: tokens.spacingHorizontalL,
-    rowGap: tokens.spacingVerticalXS,
-    margin: 0,
-    "& dt": { color: tokens.colorNeutralForeground3 },
-    "& dd": { margin: 0 },
+  linkBox: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalXS,
+    padding: tokens.spacingVerticalM,
+    borderRadius: tokens.borderRadiusMedium,
+    backgroundColor: tokens.colorNeutralBackground2,
+    border: `${tokens.strokeWidthThin} solid ${tokens.colorNeutralStroke2}`,
   },
+  linkRow: { display: "flex", gap: tokens.spacingHorizontalS, alignItems: "center" },
+  linkInput: { flex: 1 },
+  note: { color: tokens.colorNeutralForeground3 },
 });
 
-function ProvisionWizard({ onClose }: { onClose: () => void }) {
-  const styles = useWizardStyles();
-  const router = useRouter();
+const EMAIL_RE = /^\S+@\S+\.\S+$/;
+const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+
+/** Cross-app "Create company": provisions across every app, then shows the admin invite link to copy. */
+function CreateCompanyDialog({ onClose }: { onClose: () => void }) {
+  const styles = useDialogStyles();
   const toast = useAppToast();
   const queryClient = useQueryClient();
-  const [step, setStep] = useState(0);
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-  const [slugTouched, setSlugTouched] = useState(false);
-  const [timezone, setTimezone] = useState("Asia/Kolkata");
-  const [currency, setCurrency] = useState("INR");
-  const [locale, setLocale] = useState("en-IN");
+  const lastSuggested = useRef("");
+  const [adminName, setAdminName] = useState("");
   const [adminEmail, setAdminEmail] = useState("");
-  const [seats, setSeats] = useState(10);
   const [error, setError] = useState<string | null>(null);
   const [fields, setFields] = useState<Record<string, string>>({});
-  const effectiveSlug = slugTouched ? slug : slugify(name);
+  const [result, setResult] = useState<CompanyProvisionOut | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  // Auto-suggest the slug from the company name until the operator edits it themselves.
+  useEffect(() => {
+    const suggestion = slugFromName(name);
+    if (slug === lastSuggested.current) {
+      lastSuggested.current = suggestion;
+      setSlug(suggestion);
+    }
+  }, [name, slug]);
+
   const create = useMutation({
     mutationFn: () =>
-      platformApi.createTenant({
-        name: name.trim(),
-        slug: effectiveSlug,
-        timezone: timezone.trim(),
-        currency: currency.trim().toUpperCase(),
-        locale: locale.trim(),
-        seat_limit: seats,
-        admin_email: adminEmail.trim(),
-      }),
-    onSuccess: async (t) => {
-      toast.success(`${t.name} provisioned; an invitation was sent to ${adminEmail.trim()}`);
+      platformApi.createCompany({ company_name: name.trim(), slug: slug.trim(), admin_name: adminName.trim(), admin_email: adminEmail.trim() }),
+    onSuccess: async (data) => {
+      setResult(data);
       await queryClient.invalidateQueries({ queryKey: platformKeys.tenants });
-      onClose();
-      router.push(`/platform/tenants/${t.id}`);
+      await queryClient.invalidateQueries({ queryKey: platformKeys.companies });
     },
     onError: (e) => {
-      const f = fieldErrors(e);
-      setFields(f);
-      setError(platformErrorMessage(e));
-      if (f.name || f.slug || f.timezone || f.currency || f.locale) setStep(0);
-      else if (f.admin_email || f.seat_limit) setStep(1);
+      setFields(fieldErrors(e));
+      if (isApiError(e) && (e.code === "slug_taken" || e.code === "invalid_slug")) {
+        setFields((f) => ({ ...f, slug: e.code === "slug_taken" ? "This workspace ID is already taken" : errorMessage(e) }));
+        setError(null);
+      } else {
+        setError(platformErrorMessage(e));
+      }
     },
   });
-  const stepValid = [
-    name.trim().length > 0 && /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(effectiveSlug) && timezone.trim() && currency.trim(),
-    /^\S+@\S+\.\S+$/.test(adminEmail.trim()) && seats >= 1,
-    true,
-  ][step];
+
+  const valid = name.trim().length > 0 && SLUG_RE.test(slug.trim()) && adminName.trim().length > 0 && EMAIL_RE.test(adminEmail.trim());
   const f = (k: string) => ({ validationMessage: fields[k], validationState: fields[k] ? ("error" as const) : ("none" as const) });
+
+  async function copyLink() {
+    if (!result) return;
+    try {
+      await navigator.clipboard.writeText(result.invite_url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Could not copy — select the link and copy it manually.");
+    }
+  }
 
   return (
     <Dialog open onOpenChange={(_, d) => !d.open && !create.isPending && onClose()}>
       <DialogSurface>
-        <form
-          noValidate
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!stepValid) return;
-            if (step < STEPS.length - 1) setStep(step + 1);
-            else create.mutate();
-          }}
-        >
+        {result ? (
           <DialogBody>
-            <DialogTitle>Provision tenant</DialogTitle>
+            <DialogTitle>Company created</DialogTitle>
             <DialogContent className={styles.content}>
-              <ol className={styles.steps} aria-label="Steps" style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                {STEPS.map((s, i) => (
-                  <li key={s} className={i === step ? styles.current : styles.step} aria-current={i === step ? "step" : undefined}>
-                    {i + 1}. {s}
-                  </li>
-                ))}
-              </ol>
-              <ErrorBar message={error} />
-              {step === 0 && (
-                <>
-                  <Field label="Organization name" required {...f("name")}>
-                    <Input value={name} onChange={(_, d) => setName(d.value)} maxLength={200} autoFocus />
-                  </Field>
-                  <Field label="Workspace slug" required hint="Used to sign in. Lowercase letters, digits and hyphens." {...f("slug")}>
-                    <Input
-                      value={effectiveSlug}
-                      onChange={(_, d) => {
-                        setSlugTouched(true);
-                        setSlug(d.value.toLowerCase());
-                      }}
-                      maxLength={63}
-                    />
-                  </Field>
-                  <Field label="Time zone" required hint="IANA name" {...f("timezone")}>
-                    <Input value={timezone} onChange={(_, d) => setTimezone(d.value)} />
-                  </Field>
-                  <Field label="Currency" required {...f("currency")}>
-                    <Input value={currency} onChange={(_, d) => setCurrency(d.value)} maxLength={3} />
-                  </Field>
-                  <Field label="Locale" {...f("locale")}>
-                    <Input value={locale} onChange={(_, d) => setLocale(d.value)} />
-                  </Field>
-                </>
-              )}
-              {step === 1 && (
-                <>
-                  <Field label="First tenant admin's email" required hint="They receive an invitation to set up the workspace." {...f("admin_email")}>
-                    <Input type="email" value={adminEmail} onChange={(_, d) => setAdminEmail(d.value)} maxLength={254} autoFocus />
-                  </Field>
-                  <Field label="Seat limit" required {...f("seat_limit")}>
-                    <SpinButton
-                      value={seats}
-                      min={1}
-                      max={1_000_000}
-                      onChange={(_, d) => {
-                        const v = d.value ?? Number(d.displayValue);
-                        if (Number.isFinite(v) && v >= 1) setSeats(Math.round(v));
-                      }}
-                    />
-                  </Field>
-                </>
-              )}
-              {step === 2 && (
-                <>
-                  <Body1>Check the details, then provision the tenant.</Body1>
-                  <dl className={styles.review}>
-                    <dt>Name</dt>
-                    <dd>{name}</dd>
-                    <dt>Slug</dt>
-                    <dd>{effectiveSlug}</dd>
-                    <dt>Region</dt>
-                    <dd>
-                      {timezone} · {currency.toUpperCase()} · {locale}
-                    </dd>
-                    <dt>Administrator</dt>
-                    <dd>{adminEmail}</dd>
-                    <dt>Seats</dt>
-                    <dd>{seats.toLocaleString()}</dd>
-                  </dl>
-                </>
-              )}
+              <Body1>
+                <Text weight="semibold">{result.tenant_slug}.talentos.localhost</Text> is provisioned across every app.
+              </Body1>
+              <div className={styles.linkBox}>
+                <Text weight="semibold">Admin invitation link</Text>
+                <Body1 className={styles.note}>
+                  Open this to set a password for <Text weight="semibold">{result.admin_email}</Text>. In production it is emailed; locally it is shown here.
+                </Body1>
+                <div className={styles.linkRow}>
+                  <Input className={styles.linkInput} readOnly value={result.invite_url} aria-label="Admin invitation link" />
+                  <Button appearance="primary" icon={copied ? <Checkmark20Filled /> : <Copy20Regular />} onClick={copyLink}>
+                    {copied ? "Copied" : "Copy"}
+                  </Button>
+                </div>
+              </div>
             </DialogContent>
             <DialogActions>
-              <Button onClick={onClose} disabled={create.isPending}>
-                Cancel
-              </Button>
-              {step > 0 && (
-                <Button onClick={() => setStep(step - 1)} disabled={create.isPending}>
-                  Back
-                </Button>
-              )}
-              <Button
-                appearance="primary"
-                type="submit"
-                disabled={!stepValid || create.isPending}
-                icon={create.isPending ? <Spinner size="tiny" /> : undefined}
-              >
-                {step < STEPS.length - 1 ? "Next" : "Provision"}
+              <Button appearance="primary" onClick={onClose}>
+                Done
               </Button>
             </DialogActions>
           </DialogBody>
-        </form>
+        ) : (
+          <form
+            noValidate
+            onSubmit={(e) => {
+              e.preventDefault();
+              setError(null);
+              if (valid) create.mutate();
+            }}
+          >
+            <DialogBody>
+              <DialogTitle>Create company</DialogTitle>
+              <DialogContent className={styles.content}>
+                <Body1 className={styles.note}>Provisions a workspace across every app (Talent OS, Croar, Feedback IQ). Defaults: Asia/Kolkata · INR · enterprise plan.</Body1>
+                <ErrorBar message={error} />
+                <Field label="Company name" required {...f("company_name")}>
+                  <Input value={name} onChange={(_, d) => setName(d.value)} maxLength={200} autoFocus />
+                </Field>
+                <Field label="Workspace ID" required hint="Sign-in address: <id>.talentos.localhost. Lowercase letters, digits and hyphens." {...f("slug")}>
+                  <Input
+                    value={slug}
+                    onChange={(_, d) => setSlug(d.value.toLowerCase())}
+                    maxLength={40}
+                  />
+                </Field>
+                <Field label="Administrator name" required {...f("admin_name")}>
+                  <Input value={adminName} onChange={(_, d) => setAdminName(d.value)} maxLength={200} />
+                </Field>
+                <Field label="Administrator email" required hint="They receive the invitation to set up the workspace." {...f("admin_email")}>
+                  <Input type="email" value={adminEmail} onChange={(_, d) => setAdminEmail(d.value)} maxLength={254} />
+                </Field>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={onClose} disabled={create.isPending}>
+                  Cancel
+                </Button>
+                <Button appearance="primary" type="submit" disabled={!valid || create.isPending} icon={create.isPending ? <Spinner size="tiny" /> : undefined}>
+                  Create company
+                </Button>
+              </DialogActions>
+            </DialogBody>
+          </form>
+        )}
       </DialogSurface>
     </Dialog>
   );

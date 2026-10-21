@@ -10,6 +10,9 @@
  */
 import { apiRequest, type RequestOptions } from "./client";
 import type {
+  CompanyAdminOut,
+  CompanyCreate,
+  CompanyProvisionOut,
   IncidentCreate,
   IncidentNotificationOut,
   IncidentOut,
@@ -85,6 +88,10 @@ export const platformApi = {
   tenantsOverview: (page: number, pageSize: number, signal?: AbortSignal) =>
     get<Page<TenantLifecycleOut>>(`${P}/tenants-overview?page=${page}&page_size=${pageSize}`, signal),
   createTenant: (body: PlatformTenantCreate) => post<PlatformTenantOut>(`${P}/tenants`, body),
+  // Super-admin cross-app provisioning: creates a company across every app (like self-serve) and returns
+  // the admin invite link. `companies` enriches every company (incl. self-serve signups) with plan + admin email.
+  createCompany: (body: CompanyCreate) => post<CompanyProvisionOut>(`${P}/companies`, body),
+  companies: (signal?: AbortSignal) => get<CompanyAdminOut[]>(`${P}/companies`, signal),
   tenant: (id: string, signal?: AbortSignal) => get<PlatformTenantOut>(`${P}/tenants/${enc(id)}`, signal),
   tenantOverview: (id: string, signal?: AbortSignal) => get<TenantLifecycleOut>(`${P}/tenants/${enc(id)}/overview`, signal),
   lifecycle: (id: string, action: "suspend" | "reactivate" | "cancel-offboard", reason: string) =>
@@ -93,6 +100,7 @@ export const platformApi = {
   setAiBudget: (id: string, budget: number | null) =>
     put<TenantLifecycleOut>(`${P}/tenants/${enc(id)}/ai-budget`, { monthly_token_budget: budget }),
   resendAdminInvite: (id: string) => post<unknown>(`${P}/tenants/${enc(id)}/invitations/resend`),
+  revokeAdminInvite: (id: string) => post<void>(`${P}/tenants/${enc(id)}/invitations/revoke`),
 
   // support access
   requestSupport: (tenantId: string, body: SupportRequestCreate) =>
@@ -125,6 +133,7 @@ export const platformKeys = {
   me: ["platform", "me"] as const,
   mfaProbe: ["platform", "mfa-probe"] as const,
   tenants: ["platform", "tenants"] as const,
+  companies: ["platform", "companies"] as const,
   tenantList: (page: number) => ["platform", "tenants", "list", page] as const,
   tenant: (id: string) => ["platform", "tenants", "detail", id] as const,
   support: ["platform", "support"] as const,

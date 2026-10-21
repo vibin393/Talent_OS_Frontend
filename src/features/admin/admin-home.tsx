@@ -5,6 +5,7 @@ import {
   Building24Regular,
   DocumentText24Regular,
   type FluentIcon,
+  Mail24Regular,
   MailArrowUp24Regular,
   People24Regular,
   PeopleTeam24Regular,
@@ -24,6 +25,7 @@ import { visibleAdminSections } from "./sections";
 const ICONS: Record<string, FluentIcon> = {
   "/admin/users": People24Regular,
   "/admin/invitations": MailArrowUp24Regular,
+  "/admin/email-settings": Mail24Regular,
   "/admin/roles": KeyMultiple24Regular,
   "/admin/teams": PeopleTeam24Regular,
   "/admin/business-units": Building24Regular,

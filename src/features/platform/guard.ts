@@ -34,7 +34,7 @@ export type GuardState = "loading" | "login" | "enroll" | "ready" | "error";
 /**
  * What the console shell renders:
  * - `login` when `GET /platform/auth/me` is 401 (no or expired `tos_platform` session);
- * - `enroll` when the operator has no second factor (console endpoints require MFA);
+ * - `enroll` when the operator has no second factor and MFA is enforced (console endpoints require it);
  * - `ready` otherwise; `loading` while pending; `error` for anything else.
  */
 export function platformGuard(input: {
@@ -47,7 +47,9 @@ export function platformGuard(input: {
   }
   if (input.mePending || !input.me) return "loading";
   if (input.me.mfa_enabled) return "ready";
-  // Operators must always have a second factor. Probing a single endpoint is not reliable: some console
-  // endpoints (e.g. the tenant list) don't enforce MFA while others (tenant detail) do.
-  return "enroll";
+  // Operators must have a second factor wherever MFA is enforced. Probing a single endpoint is not
+  // reliable: some console endpoints (e.g. the tenant list) don't enforce MFA while others do. The
+  // backend reports whether it is actually enforcing MFA (`mfa_enforced`); it is suspended in local
+  // development so a seeded super-admin can work without a TOTP dance. Default (undefined) = enforced.
+  return input.me.mfa_enforced === false ? "ready" : "enroll";
 }

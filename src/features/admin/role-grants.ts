@@ -1,5 +1,5 @@
 /** Pure helpers for the role editor's permission checklist (permission -> scope grants). */
-import type { PermissionOut, RoleOut, RoleUpdate } from "@/lib/api/types";
+import type { ModuleAppOut, ModuleCaps, PermissionOut, RoleOut, RoleUpdate } from "@/lib/api/types";
 
 export type Grants = Record<string, string>;
 
@@ -71,7 +71,67 @@ export function sameGrants(a: Grants, b: Grants): boolean {
   return keys.length === Object.keys(b).length && keys.every((k) => b[k] === a[k]);
 }
 
-export type RoleDraft = { key: string; name: string; description: string; permissions: Grants };
+// ---------------------------------------------------------------- module capabilities (unified RBAC)
+
+/** Caps granted for one app (empty array if none), normalized. */
+function appCaps(caps: ModuleCaps, app: string): string[] {
+  return caps[app] ?? [];
+}
+
+/** Tick or untick one capability of an app. Apps with no caps are dropped so the map stays canonical. */
+export function toggleModuleCap(caps: ModuleCaps, app: string, cap: string, checked: boolean): ModuleCaps {
+  const current = new Set(appCaps(caps, app));
+  if (checked) current.add(cap);
+  else current.delete(cap);
+  const next = { ...caps };
+  if (current.size === 0) delete next[app];
+  else next[app] = Array.from(current);
+  return next;
+}
+
+/** Tick or untick every capability of an app. */
+export function toggleModuleApp(caps: ModuleCaps, app: ModuleAppOut, checked: boolean): ModuleCaps {
+  const next = { ...caps };
+  if (checked) next[app.key] = app.capabilities.map((c) => c.key);
+  else delete next[app.key];
+  return next;
+}
+
+/** Checkbox state for an app header: all ticked, none, or "mixed". */
+export function moduleAppState(caps: ModuleCaps, app: ModuleAppOut): boolean | "mixed" {
+  const granted = new Set(appCaps(caps, app.key));
+  const total = app.capabilities.length;
+  const selected = app.capabilities.filter((c) => granted.has(c.key)).length;
+  if (selected === 0) return false;
+  return selected === total ? true : "mixed";
+}
+
+export function hasModuleCap(caps: ModuleCaps, app: string, cap: string): boolean {
+  return appCaps(caps, app).includes(cap);
+}
+
+/** Count of granted caps across all apps (for the section header). */
+export function moduleCapCount(caps: ModuleCaps): number {
+  return Object.values(caps).reduce((n, list) => n + list.length, 0);
+}
+
+export function sameModuleCaps(a: ModuleCaps, b: ModuleCaps): boolean {
+  const apps = new Set([...Object.keys(a), ...Object.keys(b)]);
+  for (const app of apps) {
+    const sa = new Set(appCaps(a, app));
+    const sb = appCaps(b, app);
+    if (sa.size !== sb.length || !sb.every((c) => sa.has(c))) return false;
+  }
+  return true;
+}
+
+export type RoleDraft = {
+  key: string;
+  name: string;
+  description: string;
+  permissions: Grants;
+  moduleCaps: ModuleCaps;
+};
 
 /** PATCH body with only the fields that changed (system roles never send `key`, immutable ones no grants). */
 export function buildRoleUpdate(role: RoleOut, draft: RoleDraft): RoleUpdate {
@@ -83,5 +143,8 @@ export function buildRoleUpdate(role: RoleOut, draft: RoleDraft): RoleUpdate {
   const key = draft.key.trim();
   if (!role.is_system && key && key !== role.key) body.key = key;
   if (!role.is_immutable && !sameGrants(draft.permissions, role.permissions)) body.permissions = draft.permissions;
+  if (!role.is_immutable && !sameModuleCaps(draft.moduleCaps, role.module_caps ?? {})) {
+    body.module_caps = draft.moduleCaps;
+  }
   return body;
 }

@@ -7,6 +7,12 @@ import {
   Caption1,
   Card,
   CardHeader,
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogSurface,
+  DialogTitle,
   Field,
   Input,
   makeStyles,
@@ -206,6 +212,7 @@ function TenantDetailView({ tenant, life }: { tenant: PlatformTenantOut; life: T
             </>
           )}
         </Card>
+        <AdminInviteCard tenantId={tenant.id} disabled={status === "deleted"} />
         <AiBudgetCard tenantId={tenant.id} life={life} />
         <SupportRequestCard tenantId={tenant.id} disabled={status === "deleted"} />
       </div>
@@ -258,6 +265,60 @@ function TenantDetailView({ tenant, life }: { tenant: PlatformTenantOut; life: T
         }
       />
     </div>
+  );
+}
+
+function AdminInviteCard({ tenantId, disabled }: { tenantId: string; disabled: boolean }) {
+  const styles = useStyles();
+  const toast = useAppToast();
+  const [confirmRevoke, setConfirmRevoke] = useState(false);
+  const resend = useMutation({
+    mutationFn: () => platformApi.resendAdminInvite(tenantId),
+    onSuccess: () => toast.success("Admin invitation re-sent with a fresh link."),
+    onError: (e) => toast.error(platformErrorMessage(e)),
+  });
+  const revoke = useMutation({
+    mutationFn: () => platformApi.revokeAdminInvite(tenantId),
+    onSuccess: () => {
+      setConfirmRevoke(false);
+      toast.success("Admin invitation revoked.");
+    },
+    onError: (e) => toast.error(platformErrorMessage(e)),
+  });
+  const busy = resend.isPending || revoke.isPending;
+  return (
+    <Card className={styles.card}>
+      <CardHeader
+        header={<Subtitle2 as="h2">Admin invitation</Subtitle2>}
+        description={<Caption1>Re-send a fresh link to the first tenant admin, or revoke a pending invitation.</Caption1>}
+      />
+      <div className={styles.row}>
+        <Button appearance="primary" disabled={disabled || busy} icon={resend.isPending ? <Spinner size="tiny" /> : undefined} onClick={() => resend.mutate()}>
+          Resend invite
+        </Button>
+        <Button disabled={disabled || busy} icon={revoke.isPending ? <Spinner size="tiny" /> : undefined} onClick={() => setConfirmRevoke(true)}>
+          Revoke invite
+        </Button>
+      </div>
+      <Dialog open={confirmRevoke} onOpenChange={(_, d) => !d.open && !revoke.isPending && setConfirmRevoke(false)}>
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>Revoke admin invitation?</DialogTitle>
+            <DialogContent>
+              <Body1>The pending invitation link stops working. You can resend a new one at any time.</Body1>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setConfirmRevoke(false)} disabled={revoke.isPending}>
+                Cancel
+              </Button>
+              <Button appearance="primary" onClick={() => revoke.mutate()} disabled={revoke.isPending} icon={revoke.isPending ? <Spinner size="tiny" /> : undefined}>
+                Revoke invite
+              </Button>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
+    </Card>
   );
 }
 

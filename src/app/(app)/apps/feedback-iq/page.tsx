@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { embeddedApp } from "@/features/module-host/apps";
-import { ModuleHost } from "@/features/module-host/module-host";
+import { FeedbackIqDashboard } from "@/features/modules/feedbackiq/feedbackiq-dashboard";
 
 export const metadata: Metadata = { title: "Feedback IQ" };
 
+// Native Feedback IQ dashboard (native unification) — rendered in the Talent OS shell via the module
+// gateway, not an iframe.
 export default function Page() {
-  const app = embeddedApp("feedback-iq");
-  return <ModuleHost title={app.label} src={app.url} />;
+  return <FeedbackIqDashboard />;
 }

@@ -85,7 +85,7 @@ const useStyles = makeStyles({
  * own origin. The tenant slug is still passed as a `?tenant=` hint so the app can pre-select the
  * workspace, and the embedded app's own login remains a fallback if minting ever fails.
  */
-export function ModuleHost({ title, src }: { title: string; src: string }) {
+export function ModuleHost({ title, src, bare = false }: { title: string; src: string; bare?: boolean }) {
   const styles = useStyles();
   const me = useMe();
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
@@ -169,15 +169,17 @@ export function ModuleHost({ title, src }: { title: string; src: string }) {
 
   return (
     <div className={styles.root}>
-      <div className={styles.titleBar}>
-        <div className={styles.titleText}>
-          <Subtitle2 as="h1">{title}</Subtitle2>
-          <Text size={200}>Embedded in Talent OS with single sign-on.</Text>
+      {!bare && (
+        <div className={styles.titleBar}>
+          <div className={styles.titleText}>
+            <Subtitle2 as="h1">{title}</Subtitle2>
+            <Text size={200}>Embedded in Talent OS with single sign-on.</Text>
+          </div>
+          <Link href={frameSrc} target="_blank" rel="noopener noreferrer">
+            Open in new tab <Open16Regular aria-hidden style={{ verticalAlign: "text-bottom" }} />
+          </Link>
         </div>
-        <Link href={frameSrc} target="_blank" rel="noopener noreferrer">
-          Open in new tab <Open16Regular aria-hidden style={{ verticalAlign: "text-bottom" }} />
-        </Link>
-      </div>
+      )}
 
       <div className={styles.host}>
         <iframe
