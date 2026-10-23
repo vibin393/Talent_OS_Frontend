@@ -124,8 +124,10 @@ export const MODULE_NAVS: Record<ModuleKey, ModuleNav> = {
         title: "Rewards & recognition",
         icon: bundleIcon(Gift20Filled, Gift20Regular),
         items: [
-          { href: e("feedbackiq", "/badge/give/all"), label: "Badges" },
-          { href: e("feedbackiq", "/prize/history"), label: "Prizes" },
+          { href: e("feedbackiq", "/badge"), label: "Badges" },
+          { href: e("feedbackiq", "/badge/give/all"), label: "Badges given" },
+          { href: e("feedbackiq", "/prize"), label: "Prizes" },
+          { href: e("feedbackiq", "/prize/history"), label: "Prize history" },
         ],
       },
       {

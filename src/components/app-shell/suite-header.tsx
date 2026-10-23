@@ -20,7 +20,6 @@ import { DEFAULT_APP_PATH } from "@/lib/navigation";
 import {
   EXTERNAL_APP_ENTRIES,
   HOME_ENTRY,
-  MARKETPLACE_ENTRY,
   type LauncherEntry,
 } from "@/features/entitlements/catalog";
 import { GlobalSearch } from "./global-search";
@@ -187,9 +186,9 @@ export function SuiteHeader({
   const styles = useStyles();
   const router = useRouter();
   const [launcherOpen, setLauncherOpen] = useState(false);
-  // The apps you can switch to: Talent OS itself + the embedded platform apps + Marketplace.
+  // The apps you can switch to: Talent OS itself + the embedded platform apps.
   // (Talent OS's own modules live in the left sidebar, not the launcher.)
-  const appEntries: LauncherEntry[] = [HOME_ENTRY, ...EXTERNAL_APP_ENTRIES, MARKETPLACE_ENTRY];
+  const appEntries: LauncherEntry[] = [HOME_ENTRY, ...EXTERNAL_APP_ENTRIES];
 
   // A single waffle-launcher tile: a colored rounded icon square with the app label beneath (M365 style).
   const renderTile = (entry: LauncherEntry) => {
