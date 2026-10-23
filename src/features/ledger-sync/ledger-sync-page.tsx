@@ -25,6 +25,7 @@ export function LedgerSyncPage() {
   const les = useQuery({ queryKey: legalEntityKeys.list, queryFn: ({ signal }) => legalEntitiesApi.list(signal) });
   const entities = les.data ?? [];
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
     if (!le && entities.length) setLe(entities[0].id);
   }, [le, entities]);
   const leName = entities.find((e) => e.id === le)?.name ?? "";

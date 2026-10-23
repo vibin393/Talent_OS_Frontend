@@ -8,6 +8,7 @@ export function CookieBanner() {
 
   useEffect(() => {
     try {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
       setDismissed(document.cookie.includes("jn_consent=1"));
     } catch {
       setDismissed(false);

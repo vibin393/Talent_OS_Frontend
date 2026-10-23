@@ -78,7 +78,9 @@ export function GoLivePage() {
   const styles = useStyles();
   const canImport = usePermission("golive:import");
   const canConfigureAgents = usePermission("ai:agent_configure");
-  const canViewIntegrations = usePermission("integration:view") || usePermission("integration:manage");
+  const hasIntegrationView = usePermission("integration:view");
+  const hasIntegrationManage = usePermission("integration:manage");
+  const canViewIntegrations = hasIntegrationView || hasIntegrationManage;
   const kinds = useQuery({ queryKey: goLiveKeys.kinds, queryFn: ({ signal }) => goLiveApi.kinds(signal), enabled: canImport });
   const [selected, setSelected] = useState<string | null>(null);
   if (!canImport) return <NoAccess what="go-live data import" />;

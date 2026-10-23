@@ -310,6 +310,7 @@ function PolicyTab() {
   const [draft, setDraft] = useState<AppPolicy | null>(null);
   useEffect(() => {
     if (policy.data && !draft)
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
       setDraft({
         publisher_kinds: policy.data.publisher_kinds,
         private_apps: policy.data.private_apps,

@@ -220,6 +220,7 @@ export function TokenAction({ kind }: { kind: "verify" | "invitation" | "handoff
     const t = fragmentToken(window.location.hash);
     window.history.replaceState(null, "", window.location.pathname);
     if (!t) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
       setState({ ok: false, text: "This link is invalid or has expired." });
       return;
     }

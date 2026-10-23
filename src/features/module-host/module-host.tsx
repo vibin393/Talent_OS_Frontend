@@ -118,6 +118,7 @@ export function ModuleHost({ title, src, bare = false }: { title: string; src: s
       if (refreshTimer.current) clearTimeout(refreshTimer.current);
       const refreshSeconds = Math.max(res.expires_in - REFRESH_LEAD_SECONDS, MIN_REFRESH_SECONDS);
       refreshTimer.current = setTimeout(() => {
+        // eslint-disable-next-line react-hooks/immutability -- self-referencing refresh timer; the deferred call is runtime-safe
         void mintAndPost();
       }, refreshSeconds * 1000);
     } catch (err) {

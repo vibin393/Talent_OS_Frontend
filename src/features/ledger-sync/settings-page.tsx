@@ -21,6 +21,7 @@ export function LedgerSettingsPage() {
   const q = useQuery({ queryKey: ledgerKeys.settings, queryFn: ({ signal }) => ledgerApi.settings(signal) });
   const [draft, setDraft] = useState<LedgerSettings | null>(null);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
     if (q.data) setDraft(q.data);
   }, [q.data]);
 

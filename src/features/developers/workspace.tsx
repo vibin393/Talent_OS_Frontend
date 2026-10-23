@@ -84,6 +84,7 @@ export function Workspace() {
   }, [org]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
     void guard(async () => {
       const m = await devApi.me();
       setMe(m);
@@ -92,6 +93,7 @@ export function Workspace() {
   }, [guard]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
     void guard(refresh);
     const busy = sandboxes.some((x) => x.status.endsWith("ing"));
     if (!busy) return;

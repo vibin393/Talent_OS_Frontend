@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import bundle from "../_generated/docs-bundle.json";
 
 export const metadata: Metadata = { title: "MCP" };
@@ -18,7 +19,7 @@ export default function McpPage() {
       </p>
       <p>
         Connect with an OAuth authorization-code + PKCE token for the <code>mcp</code> resource. See the{" "}
-        <a href="/developers/docs/mcp">MCP guide</a>.
+        <Link href="/developers/docs/mcp">MCP guide</Link>.
       </p>
       {[...groups.entries()].map(([group, list]) => (
         <section key={group} aria-labelledby={`g-${group}`}>

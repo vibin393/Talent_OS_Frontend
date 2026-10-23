@@ -40,6 +40,7 @@ function ReasonDialog({ action, onDone }: { action: PendingAction | null; onDone
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
     setReason("");
     setErr(null);
   }, [action]);

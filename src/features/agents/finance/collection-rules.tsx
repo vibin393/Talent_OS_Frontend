@@ -130,6 +130,7 @@ export function CollectionRuleEditor({ id }: { id: string }) {
   useEffect(() => {
     if (one.data) {
       const { id: _id, steps: s, client_name, escalation_contact_name: _e, auto_steps: _a, updated_at: _u, ...rest } = one.data;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
       setRule({ ...rest, quiet_start: rest.quiet_start.slice(0, 5), quiet_end: rest.quiet_end.slice(0, 5) });
       setClientName(client_name ?? undefined);
       setSteps(s.map(({ id: _sid, ...st }) => st));

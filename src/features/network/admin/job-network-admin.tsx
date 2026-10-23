@@ -57,6 +57,7 @@ export function JobNetworkAdmin() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
     void load();
   }, [load]);
 

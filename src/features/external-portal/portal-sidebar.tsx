@@ -147,6 +147,7 @@ export function PortalSidebarLayout({
   const router = useRouter();
   const overlay = useMediaQuery("(max-width: 767px)");
   const [open, setOpen] = useState(true);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
   useEffect(() => setOpen(!overlay), [overlay]);
   const active = items.find((n) => isActive(pathname, n.href, home))?.href ?? "";
 

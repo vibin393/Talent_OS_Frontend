@@ -33,6 +33,7 @@ export function HrmsSettingsPage() {
   const q = useQuery({ queryKey: hrmsKeys.settings, queryFn: ({ signal }) => hrmsApi.settings(signal) });
   const [draft, setDraft] = useState<HrmsSettings | null>(null);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
     if (q.data) setDraft(q.data);
   }, [q.data]);
 

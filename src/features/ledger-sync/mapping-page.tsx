@@ -64,6 +64,7 @@ export function LedgerMappingPage({ installationId, connectorKey, legalEntityIds
     if (!q.data) return;
     const next: Record<string, Cell> = {};
     for (const m of q.data.items) next[`${m.kind}:${m.key}`] = { ref: m.external_ref, label: m.external_label ?? "" };
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
     setCells(next);
   }, [q.data]);
 

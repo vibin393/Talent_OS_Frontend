@@ -39,6 +39,7 @@ export function MarketplaceReviewDetail({ versionId }: { versionId: string }) {
   const [message, setMessage] = useState("");
   const [note, setNote] = useState("");
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
     if (q.data) setItems(q.data.checklist ?? {});
   }, [q.data]);
   const done = (data: unknown) => {

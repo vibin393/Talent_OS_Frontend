@@ -66,6 +66,7 @@ export function PostDialog({
 
   useEffect(() => {
     if (!open) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
     setStep("choose");
     setError(null);
     setAck(false);

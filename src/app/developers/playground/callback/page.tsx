@@ -14,6 +14,7 @@ export default function PlaygroundCallback() {
     const state = params.get("state");
     const err = params.get("error");
     if (err) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
       setMessage(`Sign-in was not completed: ${err}`);
       return;
     }

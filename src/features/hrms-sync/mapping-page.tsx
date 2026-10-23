@@ -78,6 +78,7 @@ export function HrmsMappingPage({ installationId, legalEntityIds }: { installati
     if (!q.data) return;
     const next: Record<string, Draft> = {};
     for (const f of q.data.fields) next[f.hrms_field] = fieldToDraft(f);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
     setDrafts(next);
     setExtraFields([]);
   }, [q.data]);

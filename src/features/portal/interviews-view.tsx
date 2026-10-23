@@ -36,6 +36,7 @@ const STATUS_LABELS: Record<string, string> = {
 export function InterviewsView() {
   const styles = usePortalStyles();
   const [upcoming, setUpcoming] = useState(true);
+  const [now] = useState(() => Date.now()); // mount-time clock; interview rows don't need a ticking "now"
   const me = useQuery<PortalMe>({ queryKey: portalKeys.me, enabled: false });
   const q = useQuery({ queryKey: portalKeys.interviews(upcoming), queryFn: ({ signal }) => portalApi.interviews(upcoming, signal) });
   const org = me.data?.tenant.display_name ?? "the hiring team";
@@ -99,7 +100,7 @@ export function InterviewsView() {
                     <Button icon={<CalendarAdd20Regular />} className={styles.button} onClick={() => downloadIcs(i, org)}>
                       Add to calendar
                     </Button>
-                    {i.status === "scheduled" && Date.parse(i.starts_at) > Date.now() && <NeedDifferentTime interviewId={i.id} />}
+                    {i.status === "scheduled" && Date.parse(i.starts_at) > now && <NeedDifferentTime interviewId={i.id} />}
                   </div>
                 )}
                 {i.status !== "cancelled" && <PortalRecordingConsent interviewId={i.id} />}

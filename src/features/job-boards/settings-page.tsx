@@ -59,6 +59,7 @@ function GeneralCard() {
   const toast = useAppToast();
   const q = useQuery({ queryKey: ["job-boards", "settings"], queryFn: jobBoardsApi.settings });
   const [form, setForm] = useState<JobBoardSettings | null>(null);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
   useEffect(() => setForm(q.data ?? null), [q.data]);
   if (!form) return null;
   return (
@@ -110,6 +111,7 @@ function DefaultBoardsCard() {
   useEffect(() => {
     const d: Record<string, string[]> = {};
     for (const s of q.data ?? []) if (s.is_default) d[s.employment_type ?? "any"] = s.board_keys;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
     setDraft(d);
   }, [q.data]);
   async function save() {
@@ -168,6 +170,7 @@ function MappingsCard() {
   const [kind, setKind] = useState("function");
   const q = useQuery({ queryKey: ["job-boards", "mappings", board], queryFn: () => jobBoardsApi.mappings(board) });
   const [items, setItems] = useState<MappingOut[]>([]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed local state from fetched/client-only data
   useEffect(() => setItems(q.data ?? []), [q.data]);
   const visible = items.map((m, i) => ({ m, i })).filter(({ m }) => m.kind === kind);
   return (
