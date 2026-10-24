@@ -264,7 +264,7 @@ export function ListingPage({ slug }: { slug: string }) {
 }
 
 function newKey(): string {
-  return typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
+  return crypto.randomUUID();
 }
 
 export function ConfigFields({ fields, values, onChange }: { fields: FormField[]; values: Record<string, unknown>; onChange: (v: Record<string, unknown>) => void }) {

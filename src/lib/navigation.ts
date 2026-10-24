@@ -24,8 +24,8 @@ function isUnsafePath(path: string): boolean {
 export function safeNextPath(next: string | null | undefined): string {
   if (!next || typeof next !== "string" || isUnsafePath(next)) return DEFAULT_APP_PATH;
   try {
-    const url = new URL(next, "http://same.origin");
-    if (url.origin !== "http://same.origin") return DEFAULT_APP_PATH;
+    const url = new URL(next, "https://same.origin");
+    if (url.origin !== "https://same.origin") return DEFAULT_APP_PATH;
     if (isUnsafePath(url.pathname) || isPublicPath(url.pathname)) return DEFAULT_APP_PATH;
     const result = `${url.pathname}${url.search}${url.hash}`;
     return isUnsafePath(result) ? DEFAULT_APP_PATH : result;

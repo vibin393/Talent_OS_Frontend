@@ -14,7 +14,7 @@ const enc = encodeURIComponent;
 const B = "/api/v1/campaign-copy";
 
 function idempotencyKey(): string {
-  return typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
+  return crypto.randomUUID();
 }
 
 /** Epic 78: AI campaign copy (`/api/v1/campaign-copy/*`). */

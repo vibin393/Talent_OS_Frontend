@@ -23,9 +23,7 @@ const C = "/api/v1/copilot";
 const enc = encodeURIComponent;
 
 function idempotencyKey(): string {
-  return typeof crypto !== "undefined" && "randomUUID" in crypto
-    ? crypto.randomUUID()
-    : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return crypto.randomUUID();
 }
 
 export const copilotKeys = {

@@ -35,9 +35,7 @@ const TRANSPORT: Record<PortalKind, Req> = {
 const enc = encodeURIComponent;
 
 function idempotencyKey(): string {
-  return typeof crypto !== "undefined" && "randomUUID" in crypto
-    ? crypto.randomUUID()
-    : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return crypto.randomUUID();
 }
 
 export const portalCopilotKeys = {

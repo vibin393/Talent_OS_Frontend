@@ -177,7 +177,7 @@ function GetTokenTab({
     if (!app) return;
     const { verifier, challenge } = await pkcePair();
     verifierRef.current = verifier;
-    stateRef.current = Math.random().toString(36).slice(2);
+    stateRef.current = crypto.randomUUID();
     const params = new URLSearchParams({
       response_type: "code",
       client_id: app.client_id,

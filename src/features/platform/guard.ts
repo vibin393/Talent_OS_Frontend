@@ -12,8 +12,8 @@ export function safePlatformNext(next: string | null | undefined): string {
     return PLATFORM_HOME;
   }
   try {
-    const url = new URL(next, "http://same.origin");
-    if (url.origin !== "http://same.origin") return PLATFORM_HOME;
+    const url = new URL(next, "https://same.origin");
+    if (url.origin !== "https://same.origin") return PLATFORM_HOME;
     const path = url.pathname;
     if (!(path === "/platform" || path.startsWith("/platform/")) || path === PLATFORM_LOGIN || path.startsWith(`${PLATFORM_LOGIN}/`)) {
       return PLATFORM_HOME;
