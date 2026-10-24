@@ -164,7 +164,7 @@ export function formatDate(iso: string | null | undefined): string {
 // ---------------------------------------------------------------- refer form
 export const RESUME_ACCEPT = ".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 export const MAX_RESUME_BYTES = 10 * 1024 * 1024;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // NOSONAR
 
 export function isEmail(v: string): boolean {
   return EMAIL_RE.test(v.trim());

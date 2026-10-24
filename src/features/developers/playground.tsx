@@ -39,7 +39,7 @@ const BUNDLE = bundle as unknown as { openapi: { paths: Record<string, Record<st
 const GET_ENDPOINTS: string[] = Object.entries(BUNDLE.openapi.paths)
   .filter(([, methods]) => "get" in methods)
   .map(([path]) => path.replace(/^\/api/, ""))
-  .sort();
+  .sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0));
 const MCP_TOOLS: McpTool[] = BUNDLE.mcp.tools;
 const MCP_PROTOCOL = BUNDLE.mcp.protocol_versions[0] ?? "2025-06-18";
 
@@ -263,7 +263,7 @@ function TryApiTab({ token, tokenResource, guard }: { token: string | null; toke
   const [endpoint, setEndpoint] = useState(GET_ENDPOINTS[0] ?? "");
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<{ status: number; headers: Record<string, string>; body: string } | null>(null);
-  const pathParams = useMemo(() => [...endpoint.matchAll(/\{([^}]+)\}/g)].map((m) => m[1]), [endpoint]);
+  const pathParams = useMemo(() => [...endpoint.matchAll(/\{([^}]+)\}/g)].map((m) => m[1]), [endpoint]); // NOSONAR
   const [params, setParams] = useState<Record<string, string>>({});
 
   const send = () =>

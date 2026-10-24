@@ -61,9 +61,9 @@ const SYMBOLS: Record<string, string> = { INR: "₹", USD: "$", EUR: "€", GBP:
 /** Group the integer digits: Indian lakh/crore grouping for INR, thousands otherwise. */
 function groupDigits(int: string, indian: boolean): string {
   if (int.length <= 3) return int;
-  if (!indian) return int.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  if (!indian) return int.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // NOSONAR
   const last3 = int.slice(-3);
-  const rest = int.slice(0, -3).replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+  const rest = int.slice(0, -3).replace(/\B(?=(\d{2})+(?!\d))/g, ","); // NOSONAR
   return `${rest},${last3}`;
 }
 

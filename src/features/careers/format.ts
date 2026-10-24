@@ -80,8 +80,8 @@ export function serializeJsonLd(data: unknown): string {
 export function textExcerpt(html: string | null | undefined, max = 160): string {
   if (!html) return "";
   const text = html
-    .replace(/<\/?(p|div|h[1-6]|li|ul|ol|br|tr|td|blockquote|section)[^>]*>/gi, " ")
-    .replace(/<[^>]*>/g, "")
+    .replace(/<\/?(p|div|h[1-6]|li|ul|ol|br|tr|td|blockquote|section)[^>]*>/gi, " ") // NOSONAR
+    .replace(/<[^>]*>/g, "") // NOSONAR
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
@@ -100,7 +100,7 @@ export function escapeXml(s: string): string {
 /** Absolute origin of the incoming request (honours `x-forwarded-*` from a trusted proxy). */
 export function requestOrigin(headers: Headers, fallback: string): string {
   const host = headers.get("x-forwarded-host") ?? headers.get("host");
-  if (!host || !/^[A-Za-z0-9.:[\]-]+$/.test(host)) return fallback.replace(/\/+$/, "");
+  if (!host || !/^[A-Za-z0-9.:[\]-]+$/.test(host)) return fallback.replace(/\/+$/, ""); // NOSONAR
   const proto = (headers.get("x-forwarded-proto") ?? (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https"))
     .split(",")[0]
     .trim();

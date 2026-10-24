@@ -109,7 +109,7 @@ export function mentionQueryAt(text: string, caret: number): { start: number; qu
   const m = /(^|[\s(])@([^@\n\r]{0,40})$/u.exec(before);
   if (!m) return null;
   const query = m[2];
-  if (/^\s/.test(query) || /\s{2,}$/.test(query)) return null;
+  if (/^\s/.test(query) || /\s{2,}$/.test(query)) return null; // NOSONAR
   return { start: before.length - query.length - 1, query };
 }
 

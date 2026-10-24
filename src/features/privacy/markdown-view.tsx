@@ -68,5 +68,5 @@ function renderBlock(b: Block, i: number): React.ReactNode {
 /** Sanitized Markdown preview (rendered as React elements, never raw HTML). */
 export function MarkdownView({ source, className }: { source: string; className?: string }) {
   const styles = useStyles();
-  return <div className={mergeClasses(styles.root, className)}>{parseMarkdown(source).map(renderBlock)}</div>;
+  return <div className={mergeClasses(styles.root, className)}>{parseMarkdown(source).map((b, i) => renderBlock(b, i))}</div>;
 }

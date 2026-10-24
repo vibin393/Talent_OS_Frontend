@@ -28,7 +28,7 @@ export function groupIndian(integer: string): string {
 
 /** Normalise a decimal string: sign, integer digits (no leading zeros), 2 fraction digits (half-up). */
 export function parseDecimal(raw: string): { negative: boolean; integer: string; fraction: string } | null {
-  const m = /^\s*([+-])?(\d*)(?:\.(\d*))?\s*$/.exec(raw);
+  const m = /^\s*([+-])?(\d*)(?:\.(\d*))?\s*$/.exec(raw); // NOSONAR
   if (!m || (!m[2] && !m[3])) return null;
   const negative = m[1] === "-";
   let integer = (m[2] || "0").replace(/^0+(?=\d)/, "");

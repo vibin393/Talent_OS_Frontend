@@ -197,7 +197,7 @@ function SettingsCard({ settings }: { settings: FxFeedSettings }) {
               max={MAX_STALE_MAX}
               value={f.max_stale_days}
               onChange={(_, d) => {
-                const v = d.value ?? (d.displayValue !== undefined ? Number.parseInt(d.displayValue, 10) : NaN);
+                const v = d.value ?? (d.displayValue !== undefined ? Number.parseInt(d.displayValue, 10) : Number.NaN);
                 if (!Number.isNaN(v)) set("max_stale_days", v);
               }}
             />
@@ -213,7 +213,7 @@ function SettingsCard({ settings }: { settings: FxFeedSettings }) {
               max={23}
               value={f.fetch_hour_ist}
               onChange={(_, d) => {
-                const v = d.value ?? (d.displayValue !== undefined ? Number.parseInt(d.displayValue, 10) : NaN);
+                const v = d.value ?? (d.displayValue !== undefined ? Number.parseInt(d.displayValue, 10) : Number.NaN);
                 if (!Number.isNaN(v)) set("fetch_hour_ist", v);
               }}
             />

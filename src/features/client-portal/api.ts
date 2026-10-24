@@ -30,8 +30,7 @@ const P = CLIENT_PORTAL_PREFIX;
 const enc = encodeURIComponent;
 
 function idemKey(): string {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
-  return `k-${Date.now()}-${crypto.randomUUID()}`;
+  return crypto.randomUUID();
 }
 
 export const cpKeys = {

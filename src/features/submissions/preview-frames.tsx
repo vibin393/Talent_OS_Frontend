@@ -33,7 +33,7 @@ function base64ToBlobUrl(b64: string, type: string): string | null {
   try {
     const bin = atob(b64);
     const bytes = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.codePointAt(i)!;
     return URL.createObjectURL(new Blob([bytes], { type }));
   } catch {
     return null;

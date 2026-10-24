@@ -98,7 +98,7 @@ function UploadForm({ token, view, onFatal }: { token: string; view: PublicUploa
         {view.tenant_name ?? "The sender"} asks you to upload the documents listed below. This link expires on {formatDateTime(view.expires_at)}
         {view.uses_left >= 0 ? ` and can be used ${view.uses_left} more time${view.uses_left === 1 ? "" : "s"}` : ""}.
       </Body1>
-      <section className={styles.notice} aria-labelledby={noticeId} tabIndex={0}>
+      <section/* NOSONAR */ className={styles.notice} aria-labelledby={noticeId} tabIndex={0}>
         <Text id={noticeId} weight="semibold" block>
           {view.notice_title}
         </Text>

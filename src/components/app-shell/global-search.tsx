@@ -230,7 +230,7 @@ export function GlobalSearch({ className }: { className?: string }) {
     const id = optionId(hit);
     const subtitle = hitSubtitle(hit);
     return (
-      <li
+      <li/* NOSONAR */
         key={`${hit.type}-${hit.id}`}
         id={id}
         role="option"

@@ -190,7 +190,7 @@ function Builder({ rule, registry }: { rule: GraphRuleOut | undefined; registry:
     onSuccess: (out) => {
       queryClient.setQueryData([...workflowKeys.rule(out.id), "graph"], out);
       void queryClient.invalidateQueries({ queryKey: workflowKeys.rules });
-      toast.success(out.is_active ? `${out.name} is on` : `${out.name} is off${out.waiting_runs ? "" : ""}`);
+      toast.success(out.is_active ? `${out.name} is on` : `${out.name} is off`);
     },
     onError: (e) => toast.error(activationError(e)),
   });

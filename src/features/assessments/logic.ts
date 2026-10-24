@@ -189,7 +189,7 @@ export function nextChoiceId(existing: readonly { id: string }[]): string {
   const used = new Set(existing.map((c) => c.id));
   for (let round = 0; ; round++) {
     for (let i = 0; i < 26; i++) {
-      const id = String.fromCharCode(97 + i) + (round ? String(round) : "");
+      const id = String.fromCodePoint(97 + i) + (round ? String(round) : "");
       if (!used.has(id)) return id;
     }
   }

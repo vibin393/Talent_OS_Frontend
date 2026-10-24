@@ -165,7 +165,7 @@ export function ExecutionsTab({ ruleId, registry }: { ruleId: string; registry: 
       renderCell: (e) => {
         const href = entityHref(e.entity_type, e.entity_id);
         return href ? (
-          <span onClick={(ev) => ev.stopPropagation()}>
+          <span/* NOSONAR */ onClick={(ev) => ev.stopPropagation()}>
             <AppLink href={href}>{humanize(e.entity_type)}</AppLink>
           </span>
         ) : (

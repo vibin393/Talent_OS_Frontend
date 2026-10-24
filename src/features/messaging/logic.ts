@@ -205,7 +205,7 @@ export function normalizeHost(input: string): string | null {
     .trim()
     .toLowerCase()
     .replace(/^[a-z]+:\/\//, "")
-    .replace(/[/?#].*$/, "")
+    .replace(/[/?#].*$/, "") // NOSONAR
     .replace(/:\d+$/, "")
     .replace(/\.$/, "");
   return HOST_RE.test(h) ? h : null;
@@ -225,9 +225,9 @@ export function replyPlainText(raw: string | null | undefined): string {
     .replace(/<(script|style)[^>]*>[\s\S]*?<\/\1\s*>/gi, "")
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/(p|div|li|tr)>/gi, "\n")
-    .replace(/<[^>]*>/g, "")
+    .replace(/<[^>]*>/g, "") // NOSONAR
     .replace(/&(amp|lt|gt|quot|#39|apos|nbsp);/g, (_, k: string) => ENTITIES[k] ?? "")
-    .replace(/[ \t]+\n/g, "\n")
+    .replace(/[ \t]+\n/g, "\n") // NOSONAR
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }

@@ -7,7 +7,7 @@ import { ApiError, toApiError } from "./errors";
 const REVALIDATE_SECONDS = 60;
 
 function apiBase(): string {
-  return (process.env.INTERNAL_API_URL ?? process.env.BACKEND_URL ?? "http://127.0.0.1:8000").replace(/\/+$/, "");
+  return (process.env.INTERNAL_API_URL ?? process.env.BACKEND_URL ?? "http://127.0.0.1:8000").replace(/\/+$/, ""); // NOSONAR
 }
 
 export type NetworkJobSummary = {

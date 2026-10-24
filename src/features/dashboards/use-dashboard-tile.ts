@@ -19,7 +19,7 @@ export const dashboardKeys = {
   all: ["reporting", "dashboards"] as const,
   list: ["reporting", "dashboards", "list"] as const,
   tile: (dashboard: string, tile: string, range: DateRange, bus: readonly string[], nonce: number, extra = "") =>
-    ["reporting", "dashboards", "tile", dashboard, tile, range.from, range.to, [...bus].sort().join(","), nonce, extra] as const,
+    ["reporting", "dashboards", "tile", dashboard, tile, range.from, range.to, [...bus].sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0)).join(","), nonce, extra] as const,
 };
 
 /** The dashboards the caller may open (default first). */

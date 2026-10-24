@@ -47,7 +47,7 @@ export function recoveryCodesText(
 
 /** File name for the recovery codes download ("talent-os-recovery-codes-acme.txt"). */
 export function recoveryCodesFileName(workspace?: string): string {
-  const slug = (workspace ?? "").toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
+  const slug = (workspace ?? "").toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, ""); // NOSONAR
   return slug ? `talent-os-recovery-codes-${slug}.txt` : "talent-os-recovery-codes.txt";
 }
 

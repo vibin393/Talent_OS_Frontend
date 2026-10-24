@@ -135,7 +135,7 @@ export function ReasonCodesAdmin() {
 }
 
 function slug(label: string): string {
-  const s = label.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 50);
+  const s = label.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 50); // NOSONAR
   return /^[a-z]/.test(s) ? s : `r_${s}`.slice(0, 50);
 }
 

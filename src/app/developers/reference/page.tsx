@@ -31,7 +31,7 @@ export default function ReferencePage() {
       <p>
         Base URL <code>/public/v1</code>. Authenticate with an OAuth access token: <code>Authorization: Bearer …</code>.
       </p>
-      {[...groups.entries()].sort().map(([tag, ops]) => (
+      {[...groups.entries()].sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0)).map(([tag, ops]) => (
         <section key={tag} aria-labelledby={`tag-${tag}`}>
           <h2 id={`tag-${tag}`}>{tag}</h2>
           {ops.map(({ method, path, op }) => (

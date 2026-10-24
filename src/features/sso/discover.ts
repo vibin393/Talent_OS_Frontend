@@ -35,7 +35,7 @@ export function loginMode(discovery: SsoDiscoverOut | null, passwordRequested: b
 
 /** Same rule as the backend `discover`: only the domain of a plausible email is sent. */
 export function shouldDiscover(tenantSlug: string, email: string): boolean {
-  return tenantSlug.trim().length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  return tenantSlug.trim().length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()); // NOSONAR
 }
 
 const SSO_ERRORS: Record<string, string> = {

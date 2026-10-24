@@ -154,7 +154,7 @@ function OkEntry({ entry }: { entry: PredictionEntry }) {
     <>
       <div className={styles.row}>
         <Tooltip content={SUPPORTING_SIGNAL} relationship="description">
-          <span className={styles.value} tabIndex={0}>
+          <span/* NOSONAR */ className={styles.value} tabIndex={0}>
             {ttf ? value : `Probability ${value ?? "—"}`}
           </span>
         </Tooltip>

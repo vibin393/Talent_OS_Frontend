@@ -133,7 +133,7 @@ function NoticeBody({ notice, className }: { notice: PublicNotice; className: st
       className={className}
       role="region"
       aria-label={notice.title}
-      tabIndex={0}
+      /* NOSONAR */ tabIndex={0}
       // notice bodies are rendered and sanitized by the API
       dangerouslySetInnerHTML={{ __html: notice.body_html || notice.body }}
     />

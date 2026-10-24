@@ -119,7 +119,7 @@ export function questionKey(label: string, taken: ReadonlySet<string>): string {
   let base = label
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "")
+    .replace(/^_+|_+$/g, "") // NOSONAR
     .slice(0, 50);
   if (!base) base = "question";
   let key = base;

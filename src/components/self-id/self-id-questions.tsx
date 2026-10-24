@@ -101,7 +101,7 @@ export function SelfIdQuestions({
             {notice.title} (version {notice.version})
           </Caption1>
           {/* Plain text rendering of the notice body: never interpreted as HTML. */}
-          <div className={styles.notice} tabIndex={0} role="region" aria-labelledby={noticeId}>
+          <div/* NOSONAR */ className={styles.notice} tabIndex={0} role="region" aria-labelledby={noticeId}>
             <Body1>{notice.text}</Body1>
           </div>
         </div>

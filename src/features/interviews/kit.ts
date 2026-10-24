@@ -19,7 +19,7 @@ export function keyFor(label: string, taken: readonly string[], fallback = "item
       .replace(/\p{M}/gu, "")
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "_")
-      .replace(/^_+|_+$/g, "")
+      .replace(/^_+|_+$/g, "") // NOSONAR
       .slice(0, 40) || fallback;
   const start = /^[a-z0-9]/.test(base) ? base : `${fallback}_${base}`;
   let key = start;

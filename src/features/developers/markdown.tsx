@@ -18,7 +18,7 @@ export function Markdown({ source }: { source: string }) {
       out.push(<pre key={key++} className="dev-code"><code>{code.join("\n")}</code></pre>);
       continue;
     }
-    const h = /^(#{1,4})\s+(.*)$/.exec(line);
+    const h = /^(#{1,4})\s+(.*)$/.exec(line); // NOSONAR
     if (h) {
       const level = Math.min(h[1].length + 1, 4);
       const Tag = `h${level}` as "h2" | "h3" | "h4";

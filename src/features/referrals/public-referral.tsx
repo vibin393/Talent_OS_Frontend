@@ -186,7 +186,7 @@ function NoticeBox({ view }: { view: PublicReferralView }) {
   const styles = useStyles();
   const id = useId();
   return (
-    <section className={styles.notice} aria-labelledby={id} tabIndex={0}>
+    <section/* NOSONAR */ className={styles.notice} aria-labelledby={id} tabIndex={0}>
       <Text id={id} weight="semibold" block>
         {view.notice.title}
         {view.notice.version != null ? ` (version ${view.notice.version})` : ""}

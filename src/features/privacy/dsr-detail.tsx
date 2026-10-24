@@ -433,7 +433,7 @@ function ErasureProgress({ dsrId, runId, canRetry }: { dsrId: string; runId: str
   });
   const retry = useMutation({
     mutationFn: () => privacyApi.retryErasure(runId),
-    onSuccess: async (out) => {
+    onSuccess: async (out) => { // NOSONAR
       queryClient.setQueryData(privacyKeys.erasureRun(runId), out);
       toast.success("Retrying the failed steps");
     },

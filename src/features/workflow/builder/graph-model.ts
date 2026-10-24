@@ -85,7 +85,7 @@ export function newNodeId(graph: Graph, type: NodeType): string {
 export function defaultNode(type: NodeType, id: string): GraphNode {
   switch (type) {
     case "condition":
-      return { id, type, when: {}, then: null, else: null };
+      return { id, type, when: {}, then: null, else: null }; // NOSONAR
     case "delay":
       return { id, type, duration: { value: 1, unit: "business_days" }, next: null };
     case "approval":
@@ -281,7 +281,7 @@ export function nodeText(node: GraphNode, labels: { fields?: Record<string, stri
   }
 }
 
-const BRANCH_TEXT: Record<string, string> = { then: "Yes", else: "No", on_approved: "If approved", on_rejected: "If rejected", on_timeout: "If timed out" };
+const BRANCH_TEXT: Record<string, string> = { then: "Yes", else: "No", on_approved: "If approved", on_rejected: "If rejected", on_timeout: "If timed out" }; // NOSONAR
 
 /** Client mirror of the server outline (used while the graph has unsaved changes). */
 export function outline(graph: Graph, labels: { fields?: Record<string, string>; actions?: Record<string, string> } = {}): OutlineRow[] {

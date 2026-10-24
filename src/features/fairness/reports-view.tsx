@@ -316,7 +316,7 @@ function RunDialog({ onClose }: { onClose: () => void }) {
                   max={100}
                   value={d.min_score}
                   onChange={(_, x) => {
-                    const v = x.value ?? (x.displayValue !== undefined ? Number.parseInt(x.displayValue, 10) : NaN);
+                    const v = x.value ?? (x.displayValue !== undefined ? Number.parseInt(x.displayValue, 10) : Number.NaN);
                     set("min_score", Number.isFinite(v) ? (v as number) : null);
                   }}
                 />

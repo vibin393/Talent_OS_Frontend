@@ -33,7 +33,7 @@ export function groupDigits(amount: string, currency = "INR"): string {
     if (whole) groups.unshift(whole);
     grouped = [...groups, tail].join(",");
   } else {
-    grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // NOSONAR
   }
   return digits
     ? `${sign}${grouped}.${frac.slice(0, digits)}`

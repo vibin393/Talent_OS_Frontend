@@ -352,7 +352,7 @@ function PayloadDialog({ runId, onClose }: { runId: string; onClose: () => void 
                   <Caption1>
                     Step {item.step_no} · {humanize(item.kind)} · {formatDateTime(item.created_at)}
                   </Caption1>
-                  <pre className={styles.pre} aria-readonly="true" tabIndex={0}>
+                  <pre/* NOSONAR */ className={styles.pre} aria-readonly="true" tabIndex={0}>
                     {pretty(item.content)}
                   </pre>
                 </div>

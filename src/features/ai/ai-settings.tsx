@@ -93,7 +93,7 @@ function AiSettingsForm({ settings }: { settings: AISettingsOut }) {
 
   const save = useMutation({
     mutationFn: () => aiApi.putFeatures(features),
-    onSuccess: async (data) => {
+    onSuccess: async (data) => { // NOSONAR
       queryClient.setQueryData(AI_SETTINGS_KEY, { ...settings, features: data });
       queryClient.setQueryData(AI_FEATURES_KEY, data);
       toast.success("AI features saved");

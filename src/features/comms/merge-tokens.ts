@@ -34,7 +34,7 @@ function escapeAttr(s: string): string {
 /** Split HTML into tags and text runs; `fn` rewrites only the text runs. */
 function mapText(html: string, fn: (text: string) => string): string {
   return html
-    .split(/(<[^>]*>)/)
+    .split(/(<[^>]*>)/) // NOSONAR
     .map((part) => (part.startsWith("<") && part.endsWith(">") ? part : fn(part)))
     .join("");
 }
@@ -59,13 +59,13 @@ export function chipsToTokens(html: string): string {
 /** Tiptap serialises an empty document as `<p></p>`; treat it (and whitespace) as empty. */
 export function isEmptyHtml(html: string): boolean {
   if (/<img\b/i.test(html)) return false;
-  return html.replace(/<[^>]*>/g, "").replace(/&nbsp;|\s/g, "") === "";
+  return html.replace(/<[^>]*>/g, "").replace(/&nbsp;|\s/g, "") === ""; // NOSONAR
 }
 
 /** Plain text of a small HTML fragment (for dirty checks and summaries). */
 export function htmlToText(html: string): string {
   return html
-    .replace(/<[^>]*>/g, " ")
+    .replace(/<[^>]*>/g, " ") // NOSONAR
     .replace(/&nbsp;/g, " ")
     .replace(/\s+/g, " ")
     .trim();

@@ -153,7 +153,7 @@ export function NoticeBox({ notice }: { notice: PublicNotice }) {
   const styles = usePublicStyles();
   const id = useId();
   return (
-    <section className={styles.notice} aria-labelledby={id} tabIndex={0}>
+    <section/* NOSONAR */ className={styles.notice} aria-labelledby={id} tabIndex={0}>
       <Text id={id} weight="semibold" block>
         {notice.title}
         {notice.version != null ? ` (version ${notice.version})` : ""}

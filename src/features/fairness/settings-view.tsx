@@ -113,7 +113,7 @@ function GeneralForm({ settings, readOnly }: { settings: FairnessSettingsOut; re
             value={d.k}
             disabled={readOnly}
             onChange={(_, x) => {
-              const v = x.value ?? (x.displayValue !== undefined ? Number.parseInt(x.displayValue, 10) : NaN);
+              const v = x.value ?? (x.displayValue !== undefined ? Number.parseInt(x.displayValue, 10) : Number.NaN);
               if (Number.isFinite(v)) set("k", Math.max(MIN_K, v as number));
             }}
           />
@@ -129,7 +129,7 @@ function GeneralForm({ settings, readOnly }: { settings: FairnessSettingsOut; re
             value={d.notice_lead_business_days}
             disabled={readOnly}
             onChange={(_, x) => {
-              const v = x.value ?? (x.displayValue !== undefined ? Number.parseInt(x.displayValue, 10) : NaN);
+              const v = x.value ?? (x.displayValue !== undefined ? Number.parseInt(x.displayValue, 10) : Number.NaN);
               if (Number.isFinite(v)) set("notice_lead_business_days", Math.max(MIN_NOTICE_DAYS, v as number));
             }}
           />

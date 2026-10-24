@@ -227,7 +227,7 @@ function CreateKeyDrawer({ onClose, onCreated }: { onClose: () => void; onCreate
     mutationFn: () =>
       apiKeysApi.create({
         name: name.trim(),
-        scopes: [...selected].sort(),
+        scopes: [...selected].sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0)),
         rate_limit_per_min: limit,
         expires_at: expires ? new Date(`${expires}T23:59:59`).toISOString() : null,
       }),

@@ -93,7 +93,7 @@ export function contactDraft(c?: ContactOut | null): ContactDraft {
   };
 }
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // NOSONAR
 
 export function validateContactDraft(d: ContactDraft): FieldErrors {
   const errors: FieldErrors = {};

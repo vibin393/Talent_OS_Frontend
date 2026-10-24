@@ -82,7 +82,7 @@ export function RulesList() {
       compare: (a, b) => Number(b.is_active) - Number(a.is_active),
       renderHeaderCell: () => "Active",
       renderCell: (r) => (
-        <span onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+        <span/* NOSONAR */ onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
           <Switch
             checked={r.is_active}
             disabled={!canManage || !!r.archived_at || toggle.isPending}

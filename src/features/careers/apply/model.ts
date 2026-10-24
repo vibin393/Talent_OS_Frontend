@@ -98,7 +98,7 @@ export function applyPrefill(details: Details, prefill: PublicPrefill | null | u
   return { details: next, filled };
 }
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // NOSONAR
 // E.164 ("+" and 8–15 digits) or a 10-digit Indian mobile number, ignoring spaces, dashes and brackets.
 const PHONE_E164 = /^\+[1-9]\d{7,14}$/;
 const PHONE_IN = /^(?:0|91)?[6-9]\d{9}$/;

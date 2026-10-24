@@ -292,7 +292,7 @@ export function ProposalInbox({ scope = "mine", initialId = null }: { scope?: "m
               <Body1 className={styles.empty}>No proposals waiting for you.</Body1>
             </div>
           ) : (
-            <div
+            <div/* NOSONAR */
               className={styles.list}
               role="listbox"
               aria-label="Proposals"

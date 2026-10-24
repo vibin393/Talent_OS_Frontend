@@ -36,7 +36,7 @@ function SettingsForm({ initial, canWrite }: { initial: VendorSettingsOut; canWr
   const set = <K extends keyof VendorSettingsOut>(k: K, v: VendorSettingsOut[K]) => setDraft((d) => ({ ...d, [k]: v }));
   const num = (k: "ownership_window_days" | "duplicate_activity_months" | "suspension_grace_days" | "notice_link_days", label: string, max: number) => (
     <Field label={label}>
-      <SpinButton value={draft[k]} min={0} max={max} disabled={!canWrite} onChange={(_, d) => set(k, d.value ?? Number(d.displayValue) ?? draft[k])} />
+      <SpinButton value={draft[k]} min={0} max={max} disabled={!canWrite} onChange={(_, d) => set(k, d.value ?? Number(d.displayValue))} />
     </Field>
   );
   const save = async () => {

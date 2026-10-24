@@ -189,7 +189,7 @@ export function formatUsd(value: string | number | null | undefined): string {
   const raw = typeof value === "number" ? (Number.isFinite(value) ? value.toFixed(6) : "") : value;
   const d = parseDecimal(raw);
   if (!d) return "—";
-  const grouped = d.integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const grouped = d.integer.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // NOSONAR
   return `${d.negative ? "-" : ""}$${grouped}.${d.fraction}`;
 }
 

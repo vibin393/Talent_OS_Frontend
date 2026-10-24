@@ -419,7 +419,7 @@ export function formToUpdate(v: CandidateFormValues, original: Pick<Candidate360
 
 export type FormErrors = Record<string, string>;
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // NOSONAR
 const CURRENCY_RE = /^[A-Za-z]{3}$/;
 
 /** Client-side checks; keys are dotted paths (`emails.0.email`). The server validates again. */

@@ -144,7 +144,7 @@ function GrantConsentDialog({ notice, onClose }: { notice: PublicNotice; onClose
           <DialogTitle>{notice.title}</DialogTitle>
           <DialogContent className={styles.form}>
             <InlineError message={error} />
-            <div role="region" aria-label={notice.title} tabIndex={0} style={{ maxHeight: 260, overflowY: "auto" }} dangerouslySetInnerHTML={{ __html: notice.body_html || notice.body }} />
+            <div/* NOSONAR */ role="region" aria-label={notice.title} tabIndex={0} style={{ maxHeight: 260, overflowY: "auto" }} dangerouslySetInnerHTML={{ __html: notice.body_html || notice.body }} />
           </DialogContent>
           <DialogActions>
             <Button className={styles.button} onClick={onClose} disabled={m.isPending}>

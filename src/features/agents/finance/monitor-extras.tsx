@@ -14,7 +14,7 @@ export const NUDGE_TOOLTIP = "The Timesheet Agent reminds everyone in your list 
 
 /** Open flag counts of the monitor rows (Epic 63 "Flags" column). */
 export function useFlagCounts(timesheetIds: string[], enabled: boolean): Record<string, FlagCount> {
-  const ids = [...timesheetIds].sort();
+  const ids = [...timesheetIds].sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0));
   const q = useQuery({
     queryKey: financeAgentKeys.flagCounts(ids),
     queryFn: ({ signal }) => financeAgentApi.flagCounts(ids, signal),

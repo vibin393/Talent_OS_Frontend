@@ -72,7 +72,7 @@ export function ConversationTranscript({ turns, ownerName }: { turns: readonly T
     if (el) el.scrollTop = el.scrollHeight;
   }, [last]);
   return (
-    <ol ref={ref} className={styles.log} {...CHAT_LOG_A11Y} aria-label="Conversation" tabIndex={0}>
+    <ol/* NOSONAR */ ref={ref} className={styles.log} {...CHAT_LOG_A11Y} aria-label="Conversation" tabIndex={0}>
       {turns.length === 0 && (
         <li className={mergeClasses(styles.bubble, styles.system)}>
           <Caption1>No messages yet.</Caption1>

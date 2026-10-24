@@ -65,7 +65,7 @@ const useStyles = makeStyles({
 });
 
 function num(v: { value?: number | null; displayValue?: string }, fallback: number): number {
-  const n = v.value ?? (v.displayValue !== undefined ? Number(v.displayValue) : NaN);
+  const n = v.value ?? (v.displayValue !== undefined ? Number(v.displayValue) : Number.NaN);
   return Number.isFinite(n) ? Math.round(n) : fallback;
 }
 

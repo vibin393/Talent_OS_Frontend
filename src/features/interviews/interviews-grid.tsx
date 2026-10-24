@@ -97,7 +97,7 @@ export function InterviewsGrid({
           createTableColumn<InterviewOut>({
             columnId: "action",
             renderHeaderCell: () => "",
-            renderCell: (i) => <div onClick={(e) => e.stopPropagation()}>{renderAction(i)}</div>,
+            renderCell: (i) => <div/* NOSONAR */ onClick={(e) => e.stopPropagation()}>{renderAction(i)}</div>,
           }),
         ]
       : []),

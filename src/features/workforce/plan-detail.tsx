@@ -320,7 +320,7 @@ function LinesTab({ plan, canWrite, onChanged }: { plan: PlanOut; canWrite: bool
   const editable = canWrite && plan.editable;
   const inRevision = plan.status === "revision_draft" || plan.current_revision > 0;
 
-  const months = useMemo(() => [...new Set((lines.data ?? []).map((l) => l.start_month))].sort(), [lines.data]);
+  const months = useMemo(() => [...new Set((lines.data ?? []).map((l) => l.start_month))].sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0)), [lines.data]);
   const items = useMemo(() => {
     const t = search.trim().toLowerCase();
     return (lines.data ?? [])

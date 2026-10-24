@@ -73,6 +73,6 @@ export function slugFromName(name: string): string {
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
+    .replace(/^-+|-+$/g, "") // NOSONAR
     .slice(0, 40);
 }

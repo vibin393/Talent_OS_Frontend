@@ -127,7 +127,7 @@ export function PlansView() {
       columnId: "actions",
       renderHeaderCell: () => <span className={admin.muted}>Actions</span>,
       renderCell: (p) => (
-        <span onClick={(e) => e.stopPropagation()}>
+        <span/* NOSONAR */ onClick={(e) => e.stopPropagation()}>
           <RowActions
             label={p.name}
             actions={

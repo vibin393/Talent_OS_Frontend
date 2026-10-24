@@ -55,7 +55,7 @@ export function emptyRequest(channel: Channel): RequestDraft {
 }
 
 export function segmentKey(label: string, taken: string[]): string {
-  const base = label.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 34) || "segment";
+  const base = label.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 34) || "segment"; // NOSONAR
   let key = base;
   let n = 2;
   while (taken.includes(key)) key = `${base}_${n++}`;

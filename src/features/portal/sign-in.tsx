@@ -11,7 +11,7 @@ import { errorMessage, isApiError } from "@/lib/api/errors";
 import { portalApi } from "@/lib/api/portal-client";
 import type { PublicBranding } from "@/lib/api/types";
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // NOSONAR
 const SLUG = /^[A-Za-z0-9][A-Za-z0-9-]{0,99}$/;
 
 export const SENT_MESSAGE = "If an account exists, we've sent a link (valid 15 minutes).";

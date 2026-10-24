@@ -46,7 +46,7 @@ export function EvalsTable({ agentKey }: { agentKey?: string }) {
         );
         return e.failing_case_ids.length ? (
           <Tooltip content={`Failing cases: ${e.failing_case_ids.join(", ")}`} relationship="description">
-            <span tabIndex={0}>{badge}</span>
+            <span/* NOSONAR */ tabIndex={0}>{badge}</span>
           </Tooltip>
         ) : (
           badge

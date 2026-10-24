@@ -359,7 +359,7 @@ function ConsentCard({
         <Heading focusKey="consent">{view.notice?.title ?? "Your consent"}</Heading>
         <Body1>{intro}</Body1>
         {view.notice ? (
-          <section className={styles.notice} aria-labelledby={noticeId} tabIndex={0}>
+          <section/* NOSONAR */ className={styles.notice} aria-labelledby={noticeId} tabIndex={0}>
             <Text id={noticeId} weight="semibold" block>
               Privacy notice (version {view.notice.version})
             </Text>

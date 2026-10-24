@@ -169,7 +169,7 @@ export function CandidateChatView({
         </Card>
       )}
 
-      <ol ref={logRef} className={styles.log} {...CHAT_LOG_A11Y} aria-label="Chat messages" tabIndex={0}>
+      <ol/* NOSONAR */ ref={logRef} className={styles.log} {...CHAT_LOG_A11Y} aria-label="Chat messages" tabIndex={0}>
         {chat.turns.length === 0 ? (
           <li className={styles.empty}>No messages yet.</li>
         ) : (

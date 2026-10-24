@@ -165,8 +165,7 @@ export function moveColumn(columns: MappingColumn[], index: number, delta: -1 | 
 }
 
 export function newIdempotencyKey(): string {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
-  return `k-${Date.now()}-${crypto.randomUUID()}`;
+  return crypto.randomUUID();
 }
 
 export function formatDate(iso: string | null | undefined): string {

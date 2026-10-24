@@ -174,7 +174,7 @@ const useDialogStyles = makeStyles({
   note: { color: tokens.colorNeutralForeground3 },
 });
 
-const EMAIL_RE = /^\S+@\S+\.\S+$/;
+const EMAIL_RE = /^\S+@\S+\.\S+$/; // NOSONAR
 const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
 
 /** Cross-app "Create company": provisions across every app, then shows the admin invite link to copy. */

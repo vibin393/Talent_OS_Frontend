@@ -175,7 +175,7 @@ export function valueEditor(f: FieldCatalog | undefined, op: Op): ValueEditor {
 export function defaultValue(f: FieldCatalog | undefined, op: Op): unknown {
   switch (valueEditor(f, op)) {
     case "bool":
-      return op === "is_null" ? true : true;
+      return true;
     case "enum":
       return f?.enum_values?.[0] ?? "";
     case "enum_multi":

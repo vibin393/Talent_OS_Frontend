@@ -60,7 +60,7 @@ export const commsKeys = {
     ["comms", "templates", "list", key, includeArchived] as const,
   template: (id: string) => ["comms", "templates", "detail", id] as const,
   mergeFields: (key: EmailTemplateKey | null) => ["comms", "merge-fields", key] as const,
-  addressStatus: (addresses: readonly string[]) => ["comms", "address-status", [...addresses].sort()] as const,
+  addressStatus: (addresses: readonly string[]) => ["comms", "address-status", [...addresses].sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0))] as const,
   connections: ["comms", "connections"] as const,
   entityEmails: (entity: string, id: string) => ["comms", "emails", entity, id] as const,
 };

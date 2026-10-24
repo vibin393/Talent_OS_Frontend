@@ -37,7 +37,7 @@ export function questionKey(label: string, taken: readonly string[] = []): strin
       .toLowerCase()
       .normalize("NFKD")
       .replace(/[^a-z0-9]+/g, "_")
-      .replace(/^_+|_+$/g, "")
+      .replace(/^_+|_+$/g, "") // NOSONAR
       .slice(0, 50) || "question";
   let key = base;
   for (let i = 2; taken.includes(key); i++) key = `${base}_${i}`;

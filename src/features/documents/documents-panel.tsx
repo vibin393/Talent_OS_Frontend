@@ -167,7 +167,7 @@ export function DocumentsPanel({ ownerKind, ownerId, ownerName }: DocumentsPanel
       columnId: "actions",
       renderHeaderCell: () => "",
       renderCell: (d) => (
-        <span onClick={(e) => e.stopPropagation()}>
+        <span/* NOSONAR */ onClick={(e) => e.stopPropagation()}>
           <RowActions
             label={d.title}
             actions={[

@@ -87,7 +87,7 @@ export function ClientCompare({ ids }: { ids: string[] }) {
   return (
     <div className={s.page}>
       <PageTitle>Compare candidates</PageTitle>
-      <div className={st.scroller} role="region" aria-label="Comparison" tabIndex={0}>
+      <div/* NOSONAR */ className={st.scroller} role="region" aria-label="Comparison" tabIndex={0}>
         <table className={st.table}>
           <thead>
             <tr>

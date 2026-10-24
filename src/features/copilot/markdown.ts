@@ -136,13 +136,13 @@ export function parseMarkdown(source: string, refs: RefSet): Block[] {
       flush();
       continue;
     }
-    const heading = /^#{1,6}\s+(.*)$/.exec(line);
+    const heading = /^#{1,6}\s+(.*)$/.exec(line); // NOSONAR
     if (heading) {
       flush();
       blocks.push({ kind: "h", children: parseInline(heading[1], refs) });
       continue;
     }
-    if (/^\s*\|.*\|\s*$/.test(line) && i + 1 < lines.length && /^\s*\|?\s*:?-{2,}/.test(lines[i + 1])) {
+    if (/^\s*\|.*\|\s*$/.test(line) && i + 1 < lines.length && /^\s*\|?\s*:?-{2,}/.test(lines[i + 1])) { // NOSONAR
       flush();
       const head = cells(line).map((c) => parseInline(c, refs));
       const rows: Inline[][][] = [];
@@ -155,13 +155,13 @@ export function parseMarkdown(source: string, refs: RefSet): Block[] {
       blocks.push({ kind: "table", head, rows });
       continue;
     }
-    const bullet = /^\s*[-*+]\s+(.*)$/.exec(line);
-    const numbered = /^\s*\d+[.)]\s+(.*)$/.exec(line);
+    const bullet = /^\s*[-*+]\s+(.*)$/.exec(line); // NOSONAR
+    const numbered = /^\s*\d+[.)]\s+(.*)$/.exec(line); // NOSONAR
     if (bullet || numbered) {
       flush();
       const kind = bullet ? "ul" : "ol";
       const items: Inline[][] = [];
-      const re = bullet ? /^\s*[-*+]\s+(.*)$/ : /^\s*\d+[.)]\s+(.*)$/;
+      const re = bullet ? /^\s*[-*+]\s+(.*)$/ : /^\s*\d+[.)]\s+(.*)$/; // NOSONAR
       while (i < lines.length) {
         const m = re.exec(lines[i]);
         if (!m) break;

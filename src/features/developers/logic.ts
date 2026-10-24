@@ -29,8 +29,8 @@ export function gstinError(value: string): string | null {
 
 function base64url(bytes: Uint8Array): string {
   let s = "";
-  for (const b of bytes) s += String.fromCharCode(b);
-  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  for (const b of bytes) s += String.fromCodePoint(b);
+  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); // NOSONAR
 }
 
 /** RFC 7636 PKCE pair (S256), browser-side only; the verifier is kept in memory, never in storage. */

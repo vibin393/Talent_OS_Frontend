@@ -130,6 +130,5 @@ export function startOfWeek(now: Date = new Date()): string {
 
 /** Stable random key (Idempotency-Key). */
 export function newKey(): string {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
-  return `${Date.now().toString(36)}-${crypto.randomUUID()}`;
+  return crypto.randomUUID();
 }

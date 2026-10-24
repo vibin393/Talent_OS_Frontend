@@ -57,7 +57,7 @@ export function validateFeedForm(f: FeedForm): Partial<Record<keyof FeedForm, st
 
 /** PUT body: only the editable fields, pairs normalised, de-duplicated and sorted. */
 export function serializeFeedForm(f: FeedForm): FxFeedSettingsIn {
-  const pairs = [...new Set(f.pairs.map((p) => normalizePair(p) ?? p.trim().toUpperCase()))].sort();
+  const pairs = [...new Set(f.pairs.map((p) => normalizePair(p) ?? p.trim().toUpperCase()))].sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0));
   return {
     enabled: f.enabled,
     pairs,

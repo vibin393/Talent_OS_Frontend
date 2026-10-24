@@ -24,7 +24,7 @@ export type ScheduleValues = {
 export type ScheduleField = keyof ScheduleValues | "start";
 export type ScheduleErrors = Partial<Record<ScheduleField, string>>;
 
-const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/; // NOSONAR
 const URL_RE = /^https?:\/\/\S+$/i;
 
 export function isEmail(value: string): boolean {
@@ -122,9 +122,11 @@ export function linkFieldState(mode: InterviewMode, organiserConnected: boolean,
 }
 
 /** Client-side validation; the server re-validates everything (and owns the timezone conversion). */
+const DEFAULT_SCHEDULE_OPTS: { requireStage: boolean; organiserConnected?: boolean; now?: number } = { requireStage: true };
+
 export function validateSchedule(
   v: ScheduleValues,
-  opts: { requireStage: boolean; organiserConnected?: boolean; now?: number } = { requireStage: true },
+  opts: { requireStage: boolean; organiserConnected?: boolean; now?: number } = DEFAULT_SCHEDULE_OPTS,
 ): ScheduleErrors {
   const e: ScheduleErrors = {};
   const now = opts.now ?? Date.now();

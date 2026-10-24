@@ -233,7 +233,7 @@ function CalendarCard({ initial }: { initial: BusinessCalendarOut }) {
           icon={<Add20Regular />}
           disabled={!holiday || draft.holidays.includes(holiday)}
           onClick={() => {
-            setDraft((d) => ({ ...d, holidays: [...d.holidays, holiday].sort() }));
+            setDraft((d) => ({ ...d, holidays: [...d.holidays, holiday].sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0)) }));
             setHoliday("");
           }}
         >

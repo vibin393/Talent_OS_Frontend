@@ -180,7 +180,7 @@ export function TimeConfigForm({
         <Field label="Work days">
           <div className={styles.checks}>
             {WEEKDAY_LABELS.map((l, i) => (
-              <Checkbox key={l} label={l} checked={v.work_days.includes(i)} onChange={(_, d) => set("work_days", toggle(v.work_days, i, !!d.checked).sort())} />
+              <Checkbox key={l} label={l} checked={v.work_days.includes(i)} onChange={(_, d) => set("work_days", toggle(v.work_days, i, !!d.checked).sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0)))} />
             ))}
           </div>
         </Field>

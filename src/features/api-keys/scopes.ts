@@ -20,7 +20,7 @@ export const NON_DELEGABLE_SCOPES: ReadonlySet<string> = new Set([
 export function delegableScopes(held: PermissionMap, serverList?: readonly string[] | null): string[] {
   const mine = Object.keys(held ?? {}).filter((p) => !NON_DELEGABLE_SCOPES.has(p));
   const allowed = serverList ? mine.filter((p) => serverList.includes(p)) : mine;
-  return [...new Set(allowed)].sort();
+  return [...new Set(allowed)].sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0));
 }
 
 export type ScopeGroup = { resource: string; label: string; scopes: string[] };
@@ -55,7 +55,7 @@ export function groupScopes(scopes: readonly string[]): ScopeGroup[] {
     groups.set(resource, [...(groups.get(resource) ?? []), s]);
   }
   return [...groups.entries()]
-    .map(([resource, list]) => ({ resource, label: resourceLabel(resource), scopes: [...list].sort() }))
+    .map(([resource, list]) => ({ resource, label: resourceLabel(resource), scopes: [...list].sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0)) }))
     .sort((a, b) => a.label.localeCompare(b.label));
 }
 

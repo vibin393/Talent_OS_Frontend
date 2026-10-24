@@ -159,8 +159,7 @@ export function validatePtp(form: PtpForm, today: string): Record<string, string
 }
 
 export function newIdempotencyKey(): string {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
-  return `k-${Date.now()}-${crypto.randomUUID()}`;
+  return crypto.randomUUID();
 }
 
 export const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];

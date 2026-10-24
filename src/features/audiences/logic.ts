@@ -58,8 +58,8 @@ export function removeSource(sources: SourceDraft[], target: Pick<SourceDraft, "
 
 export function sameSources(a: SourceDraft[], b: SourceDraft[]): boolean {
   const key = (s: SourceDraft) => `${s.mode}:${s.kind}:${s.id}`;
-  const ka = a.map(key).sort();
-  const kb = b.map(key).sort();
+  const ka = a.map(key).sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0));
+  const kb = b.map(key).sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0));
   return ka.length === kb.length && ka.every((k, i) => k === kb[i]);
 }
 

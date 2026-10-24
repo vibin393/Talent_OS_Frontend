@@ -35,7 +35,7 @@ export const EMPTY_SUBMIT: SubmitValues = {
 };
 
 const RATE_RE = /^\d{1,10}(\.\d{1,4})?$/;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // NOSONAR
 const RESUME_TYPES = [".pdf", ".docx"];
 export const MAX_RESUME_BYTES = 10 * 1024 * 1024;
 

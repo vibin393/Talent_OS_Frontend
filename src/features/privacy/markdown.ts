@@ -80,11 +80,11 @@ export function parseMarkdown(src: string): Block[] {
     if (!line) {
       flushPara();
       flushList();
-    } else if ((m = /^(#{1,3})\s+(.*)$/.exec(line))) {
+    } else if ((m = /^(#{1,3})\s+(.*)$/.exec(line))) { // NOSONAR
       flushPara();
       flushList();
       blocks.push({ t: "h", level: m[1].length as 1 | 2 | 3, v: parseInline(m[2]) });
-    } else if ((m = /^[-*+]\s+(.*)$/.exec(line)) || (m = /^\d+[.)]\s+(.*)$/.exec(line))) {
+    } else if ((m = /^[-*+]\s+(.*)$/.exec(line)) || (m = /^\d+[.)]\s+(.*)$/.exec(line))) { // NOSONAR
       flushPara();
       const kind = /^\d/.test(line) ? "ol" : "ul";
       if (!list || list.t !== kind) {

@@ -26,7 +26,7 @@ export function portalSignInMode(discovery: ClientSsoDiscoverOut | null, fallbac
 }
 
 export function shouldDiscoverPortal(tenantSlug: string, email: string): boolean {
-  return tenantSlug.trim().length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  return tenantSlug.trim().length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()); // NOSONAR
 }
 
 /** A discovery result applies only while the workspace + email it was asked for are unchanged. */

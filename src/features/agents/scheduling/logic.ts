@@ -93,12 +93,14 @@ export interface CounterValidation {
  * "Suggest up to 3 times": each row (date + from/to in `tz`) must be complete, in the future, at least `duration`
  * minutes long and inside the candidate hours; at most 3 rows.
  */
+const DEFAULT_COUNTER_HOURS = { start: "00:00", end: "24:00" };
+
 export function validateCounter(
   rows: CounterRow[],
   tz: string,
   duration: number,
   now: number = Date.now(),
-  hours: { start: string; end: string } = { start: "00:00", end: "24:00" },
+  hours: { start: string; end: string } = DEFAULT_COUNTER_HOURS,
 ): CounterValidation {
   const errors: string[] = [];
   const windows: { start: string; end: string }[] = [];

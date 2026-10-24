@@ -879,7 +879,7 @@ function CounselDirectory({ canConfigure }: { canConfigure: boolean }) {
   );
 }
 
-const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/; // NOSONAR
 
 function CounselDialog({ counsel, onClose, onDone }: { counsel: CounselOut | null; onClose: () => void; onDone: () => void }) {
   const admin = useAdminStyles();

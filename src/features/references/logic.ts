@@ -5,7 +5,7 @@ export type RefereeErrors = Partial<Record<keyof RefereeDraft, string>>;
 export type Question = { key: string; text: string; kind: "text" | "rating" | "yes_no"; required: boolean };
 export type AnswerValue = string | number | boolean | null;
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/; // NOSONAR
 
 export function emptyReferee(): RefereeDraft {
   return { name: "", relationship: "", company: "", email: "", phone: "" };

@@ -342,7 +342,7 @@ function AgentEditor({ agent, canEdit }: { agent: AgentCatalogDetail; canEdit: b
               disabled={!canEdit}
               value={draft.proposal_expiry_hours}
               onChange={(_, d) => {
-                const v = d.value ?? (d.displayValue !== undefined ? Number.parseInt(d.displayValue, 10) : NaN);
+                const v = d.value ?? (d.displayValue !== undefined ? Number.parseInt(d.displayValue, 10) : Number.NaN);
                 set({ proposal_expiry_hours: Number.isFinite(v) ? (v as number) : null });
               }}
             />
@@ -383,7 +383,7 @@ function AgentEditor({ agent, canEdit }: { agent: AgentCatalogDetail; canEdit: b
                   disabled={!canEdit}
                   value={draft.limits[f.key] ?? null}
                   onChange={(_, d) => {
-                    const v = d.value ?? (d.displayValue !== undefined ? Number.parseInt(d.displayValue, 10) : NaN);
+                    const v = d.value ?? (d.displayValue !== undefined ? Number.parseInt(d.displayValue, 10) : Number.NaN);
                     const next = { ...draft.limits };
                     if (Number.isFinite(v)) next[f.key] = v as number;
                     else delete next[f.key];

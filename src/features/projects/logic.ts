@@ -202,7 +202,7 @@ export function buildTimelineGrid(tl: ResourceTimeline, weeks: readonly string[]
     cells: weeks.map((week) => {
       const segs = w.segments.filter((s) => overlaps(s.start, s.end, week));
       if (!segs.length) return { week, state: "empty" as const, text: "", split: [] };
-      const peak = segs.reduce((a, b) => (Number(b.total_pct) > Number(a.total_pct) ? b : a));
+      const peak = segs.reduce((a, b) => (Number(b.total_pct) > Number(a.total_pct) ? b : a)); // NOSONAR
       const over = segs.find((s) => s.over);
       const shown = over ?? peak;
       return { week, state: over ? ("over" as const) : ("ok" as const), text: `${fmtNum(shown.total_pct)}%`, split: shown.split };

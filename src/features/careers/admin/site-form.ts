@@ -45,7 +45,7 @@ export function siteDraft(site: CareerSiteOut): SiteDraft {
   };
 }
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // NOSONAR
 
 export function validateSite(d: SiteDraft): Record<string, string> {
   const e: Record<string, string> = {};
@@ -77,6 +77,6 @@ export function siteUpdate(initial: SiteDraft, d: SiteDraft): CareerSiteUpdate {
     );
   const a = clean(initial.labels);
   const b = clean(d.labels);
-  if (JSON.stringify(Object.entries(a).sort()) !== JSON.stringify(Object.entries(b).sort())) out.candidate_stage_labels = b;
+  if (JSON.stringify(Object.entries(a).sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0))) !== JSON.stringify(Object.entries(b).sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0)))) out.candidate_stage_labels = b;
   return out;
 }

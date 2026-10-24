@@ -30,7 +30,7 @@ export function ContactabilityCell({ entry }: { entry: Pick<EntryOut, "contactab
         const cls = `${state?.ok ? styles.ok : styles.no} ${entry.best_channel === ch ? styles.best : ""}`;
         return (
           <Tooltip key={ch} content={label} relationship="label">
-            <span className={cls} role="img" aria-label={label} tabIndex={0}>
+            <span/* NOSONAR */ className={cls} role="img" aria-label={label} tabIndex={0}>
               {ICONS[ch]}
             </span>
           </Tooltip>

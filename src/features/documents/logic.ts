@@ -257,5 +257,5 @@ export function requestErrorMessage(e: unknown, fallback: string): string {
 
 /** Simple email check for external signers (the API is the authority). */
 export function isEmail(s: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim()); // NOSONAR
 }

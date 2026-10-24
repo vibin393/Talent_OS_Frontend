@@ -183,9 +183,7 @@ export function cancelCountdown(
 }
 
 export function newIdempotencyKey(): string {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto)
-    return crypto.randomUUID();
-  return `k-${Date.now()}-${crypto.randomUUID()}`;
+  return crypto.randomUUID();
 }
 
 export function billingErrorMessage(

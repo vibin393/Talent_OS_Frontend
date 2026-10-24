@@ -154,8 +154,7 @@ export function bulkConfirmation(selected: string[], preview: ClientBulkPreviewO
 
 /** A fresh Idempotency-Key for one user action. */
 export function newIdempotencyKey(): string {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
-  return `${Date.now().toString(36)}-${crypto.randomUUID()}`;
+  return crypto.randomUUID();
 }
 
 /** Human message for a known error code. */

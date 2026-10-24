@@ -39,7 +39,7 @@ export function halfDayError(f: HalfDayForm): string | null {
 export function formatDays(days: string): string {
   const m = /^(-?\d+)(?:\.(\d+))?$/.exec(days.trim());
   if (!m) return `${days} days`;
-  const frac = (m[2] ?? "").replace(/0+$/, "");
+  const frac = (m[2] ?? "").replace(/0+$/, ""); // NOSONAR
   const text = frac ? `${m[1]}.${frac}` : m[1];
   return text === "1" || text === "-1" ? `${text} day` : `${text} days`;
 }

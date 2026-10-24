@@ -75,7 +75,7 @@ export function calendarDraft(c: BusinessCalendarOut): CalendarDraft {
     const w = c.work_week[d];
     days[d] = w ? { working: true, start: w.start, end: w.end } : { working: false, start: "09:00", end: "18:00" };
   }
-  return { days, holidays: [...c.holidays].sort() };
+  return { days, holidays: [...c.holidays].sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0)) };
 }
 
 /** Message for an invalid calendar, or null. */

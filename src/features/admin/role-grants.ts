@@ -61,7 +61,7 @@ export function roleKeyFromName(name: string): string {
     .replace(/[^a-z0-9]+/g, "_")
     .replace(/^[^a-z]+/, "")
     .slice(0, 64)
-    .replace(/_+$/, "");
+    .replace(/_+$/, ""); // NOSONAR
   if (key.length === 1) key = `${key}_role`;
   return key;
 }

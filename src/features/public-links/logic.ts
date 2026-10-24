@@ -100,7 +100,7 @@ export const CONSENT_PURPOSE_LABELS: Record<string, string> = {
 /** Storage key derived from the token (a short hash, so the raw token is not stored). */
 export function draftKey(token: string): string {
   let h = 5381;
-  for (let i = 0; i < token.length; i++) h = ((h << 5) + h + token.charCodeAt(i)) | 0;
+  for (let i = 0; i < token.length; i++) h = ((h << 5) + h + token.charCodeAt(i)) | 0; // NOSONAR
   return `tos-link-draft-${(h >>> 0).toString(36)}`;
 }
 

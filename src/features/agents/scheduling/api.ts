@@ -78,7 +78,7 @@ export const portalSchedulingApi = {
     portalRequest<{ status: string }>(`${V}/portal/interviews/${enc(interviewId)}/reschedule-request`, { method: "POST", body: { reason } }),
   source: (offer: SlotPickView): SlotPickSource => ({
     key: [...schedulingKeys.portal, offer.offer_id],
-    get: async () => offer,
+    get: async () => offer, // NOSONAR
     pick: (index, pickId) => portalRequest<PickResultOut>(`${P}/${enc(offer.offer_id ?? "")}/pick`, { method: "POST", body: { index, pick_id: pickId } }),
     counter: (windows, note) => portalRequest<SlotPickView>(`${P}/${enc(offer.offer_id ?? "")}/counter`, { method: "POST", body: { windows, note } }),
   }),

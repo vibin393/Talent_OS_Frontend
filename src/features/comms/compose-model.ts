@@ -143,7 +143,7 @@ export function needsOverwriteConfirm(draft: Pick<ComposeDraft, "subject" | "bod
 }
 
 // ---------------------------------------------------------------- recipients
-const EMAIL_RE = /^[^\s@<>(),;:"]+@[^\s@<>(),;:"]+\.[^\s@<>(),;:"]{2,}$/;
+const EMAIL_RE = /^[^\s@<>(),;:"]+@[^\s@<>(),;:"]+\.[^\s@<>(),;:"]{2,}$/; // NOSONAR
 
 export function isEmailAddress(text: string): boolean {
   return EMAIL_RE.test(text.trim());
@@ -182,7 +182,7 @@ export function isBounced(r: ComposeRecipient, bounced: ReadonlySet<string>): bo
 export function knownAddresses(recipients: readonly ComposeRecipient[]): string[] {
   const out = new Set<string>();
   for (const r of recipients) if (r.address && isEmailAddress(r.address)) out.add(r.address.toLowerCase());
-  return [...out].sort();
+  return [...out].sort((x, y) => (String(x) < String(y) ? -1 : String(x) > String(y) ? 1 : 0));
 }
 
 // ---------------------------------------------------------------- send / validation

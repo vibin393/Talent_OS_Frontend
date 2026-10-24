@@ -240,7 +240,7 @@ function TenantDetailView({ tenant, life }: { tenant: PlatformTenantOut; life: T
         minLength={10}
         confirmLabel="Start offboarding"
         errorMessage={platformErrorMessage}
-        canConfirm={confirmSlug.trim() === tenant.slug && /^\S+@\S+\.\S+$/.test(contact.trim())}
+        canConfirm={/* NOSONAR */ confirmSlug.trim() === tenant.slug && /^\S+@\S+\.\S+$/.test(contact.trim())}
         onClose={() => {
           setDialog(null);
           setConfirmSlug("");

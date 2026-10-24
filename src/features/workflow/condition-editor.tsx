@@ -147,7 +147,7 @@ export function ValueEditor({
           value={v as number}
           step={field?.type === "decimal" ? 0.5 : 1}
           onChange={(_, d) => {
-            const n = d.value ?? (d.displayValue !== undefined ? Number(d.displayValue) : NaN);
+            const n = d.value ?? (d.displayValue !== undefined ? Number(d.displayValue) : Number.NaN);
             if (Number.isFinite(n)) onChange(n);
           }}
         />
