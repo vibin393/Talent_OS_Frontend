@@ -71,6 +71,10 @@ describe("JSON-LD and page helpers", () => {
   it("makes plain-text excerpts", () => {
     expect(textExcerpt("<p>Hello &amp; <b>welcome</b></p>")).toBe("Hello & welcome");
     expect(textExcerpt(`<p>${"a".repeat(300)}</p>`, 20)).toHaveLength(20);
+    // Regression: block tags between words must become a space (the regex previously held a stray
+    // backspace byte instead of \b, so adjacent blocks ran together).
+    expect(textExcerpt("<p>First</p><p>Second</p>")).toBe("First Second");
+    expect(textExcerpt("<li>One</li><li>Two</li>")).toBe("One Two");
   });
 
   it("derives the request origin", () => {

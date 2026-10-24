@@ -24,4 +24,15 @@ describe("Phase 4 navigation", () => {
     expect(activeNavHref("/ai/copilot")).toBe("/ai/copilot");
     expect(activeNavHref("/admin/users")).toBe("/admin");
   });
+
+  it("gates Pre-start risk on BOTH compliance:read and placement:read (matches the API; BUG-05)", () => {
+    const shows = (perms: Record<string, string>) =>
+      visibleNavItems(NAV_ITEMS, perms).some((i) => i.href === "/compliance/pre-start-risk");
+    // compliance-only role must NOT see it (the endpoint needs placement:read too -> would 403)
+    expect(shows({ "compliance:read": "tenant" })).toBe(false);
+    // placement:read alone is not enough either
+    expect(shows({ "placement:read": "tenant" })).toBe(false);
+    // both permissions -> visible and usable
+    expect(shows({ "compliance:read": "tenant", "placement:read": "tenant" })).toBe(true);
+  });
 });

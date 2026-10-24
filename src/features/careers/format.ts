@@ -80,7 +80,7 @@ export function serializeJsonLd(data: unknown): string {
 export function textExcerpt(html: string | null | undefined, max = 160): string {
   if (!html) return "";
   const text = html
-    .replace(/<\/?(p|div|h[1-6]|li|ul|ol|br|tr|td|blockquote|section)[^>]*>/gi, " ") // NOSONAR
+    .replace(/<\/?(p|div|h[1-6]|li|ul|ol|br|tr|td|blockquote|section)\b[^>]*>/gi, " ")
     .replace(/<[^>]*>/g, "") // NOSONAR
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")

@@ -81,7 +81,7 @@ import {
   BrainCircuit20Filled,
   BrainCircuit20Regular,
 } from "@fluentui/react-icons";
-import { ADMIN_AREA_PERMISSIONS, APPROVER_PERMISSIONS, hasAnyPermission, type PermissionMap } from "@/features/auth/permissions";
+import { ADMIN_AREA_PERMISSIONS, APPROVER_PERMISSIONS, hasAllPermissions, hasAnyPermission, type PermissionMap } from "@/features/auth/permissions";
 
 export type NavItem = {
   href: string;
@@ -89,6 +89,9 @@ export type NavItem = {
   icon: FluentIcon;
   /** Only shown when the user holds at least one of these permissions (`me.permissions`). */
   requiresAny?: readonly string[];
+  /** Only shown when the user holds ALL of these permissions — use when the target endpoint
+   * requires several permissions, so the nav item matches the API (no "visible but 403" items). */
+  requiresAll?: readonly string[];
   /** Live count shown as a `CounterBadge` beside the label. */
   counter?: "approvals" | "tasks" | "proposals";
 };
@@ -289,7 +292,9 @@ export const NAV_ITEMS: NavItem[] = [
     href: "/compliance/pre-start-risk",
     label: "Pre-start risk",
     icon: bundleIcon(ShieldCheckmark20Filled, ShieldCheckmark20Regular),
-    requiresAny: ["compliance:read"],
+    // The endpoint requires compliance:read AND placement:read (placement data scope), so gate the
+    // nav on both — otherwise a compliance-only role sees the item but the API returns 403 (BUG-05).
+    requiresAll: ["compliance:read", "placement:read"],
   },
   {
     href: "/onboarding/questions",
@@ -679,8 +684,12 @@ export const NAV_SECTIONS: readonly NavSection[] = [
 ];
 
 /** Nav items visible to a user with `permissions`. */
-export function visibleNavItems<T extends Pick<NavItem, "requiresAny">>(items: readonly T[], permissions: PermissionMap): T[] {
-  return items.filter((item) => !item.requiresAny || hasAnyPermission(permissions, item.requiresAny));
+export function visibleNavItems<T extends Pick<NavItem, "requiresAny" | "requiresAll">>(items: readonly T[], permissions: PermissionMap): T[] {
+  return items.filter(
+    (item) =>
+      (!item.requiresAny || hasAnyPermission(permissions, item.requiresAny)) &&
+      (!item.requiresAll || hasAllPermissions(permissions, item.requiresAll)),
+  );
 }
 
 /** The nav item whose route contains `pathname`, if any. */

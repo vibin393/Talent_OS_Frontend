@@ -32,6 +32,10 @@ export function hasAnyPermission(permissions: PermissionMap, perms: readonly str
   return perms.some((p) => hasPermission(permissions, p));
 }
 
+export function hasAllPermissions(permissions: PermissionMap, perms: readonly string[]): boolean {
+  return perms.every((p) => hasPermission(permissions, p));
+}
+
 /** Permissions that decide at least one kind of approval step (demands, offers, rate exceptions, timesheets,
  * expenses, leave, bank details, invoices, write-offs, period reopen, campaigns, referral rewards, workforce plans).
  * Holding any of them opens the Approvals inbox; anyone who is the current approver of a pending request also sees
